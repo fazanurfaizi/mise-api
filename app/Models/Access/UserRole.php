@@ -5,6 +5,7 @@ namespace App\Models\Access;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class UserRole extends Model
 {
@@ -15,15 +16,6 @@ class UserRole extends Model
         'user_id',
         'role_id'
     ];
-
-    protected static $logAttributes = true;
-    protected static $logFillable = true;
-    protected static $logName = 'UserRole';
-
-    public function getDescriptionForEvent(string $eventName): string
-    {
-        return "This model has been {$eventName}";
-    }
 
     /**
      * Get the role that owns the UserRole
@@ -43,5 +35,23 @@ class UserRole extends Model
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    protected static $logAttributes = true;
+    protected static $logFillable = [
+        'user_id',
+        'role_id'
+    ];
+    protected static $logName = 'UserRole';
+
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        return "This model has been {$eventName}";
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(self::$logFillable);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models\User;
 
+use App\Models\Access\Role;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -9,7 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\Traits\LogsActivity;
-use App\Models\Access\Role;
+use Spatie\Activitylog\LogOptions;
 
 class User extends Authenticatable
 {
@@ -52,6 +53,16 @@ class User extends Authenticatable
     ];
 
     /**
+     * The roles that belong to the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function roles(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Role::class, 'user_roles');
+    }
+
+    /**
      * The attributes that should be store into logs activity.
      *
      * @var array
@@ -80,13 +91,9 @@ class User extends Authenticatable
         return "This model has been {$eventName}";
     }
 
-    /**
-     * The roles that belong to the User
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function roles(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function getActivitylogOptions(): LogOptions
     {
-        return $this->belongsToMany(Role::class, 'user_roles');
+        return LogOptions::defaults()
+            ->logOnly(self::$logFillable);
     }
 }

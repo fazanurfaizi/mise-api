@@ -5,6 +5,7 @@ namespace App\Models\Access;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Role extends Model
 {
@@ -13,9 +14,10 @@ class Role extends Model
 
     protected $guarded = [];
 
-    protected static $logAttributes = true;
-    protected static $logFillable = true;
-    protected static $logName = 'Role';
+    protected $fillable = [
+        'name',
+        'display_name',
+    ];
 
     /**
      * The users that belong to the Role
@@ -48,5 +50,18 @@ class Role extends Model
     public function permissions(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Permission::class, 'role_permissions');
+    }
+
+    protected static $logAttributes = true;
+    protected static $logFillable = [
+        'name',
+        'display_name'
+    ];
+    protected static $logName = 'Role';
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(self::$logFillable);
     }
 }

@@ -5,21 +5,13 @@ namespace App\Models\Access;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Permission extends Model
 {
     use HasFactory, LogsActivity;
 
     protected $guarded = [];
-
-    protected static $logAttributes = true;
-    protected static $logFillable = true;
-    protected static $logName = 'Permission';
-
-    public function getDescriptionForEvent(string $eventName): string
-    {
-        return "This model has been {$eventName}";
-    }
 
     /**
      * The roles that belong to the Permission
@@ -39,6 +31,25 @@ class Permission extends Model
     public function rolePermission(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(RolePermission::class);
+    }
+
+    protected static $logAttributes = true;
+    protected static $logFillable = [
+        'key',
+        'description',
+        'table_name'
+    ];
+    protected static $logName = 'Permission';
+
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        return "This model has been {$eventName}";
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(self::$logFillable);
     }
 
     /**
