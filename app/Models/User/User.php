@@ -6,11 +6,18 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Activitylog\Traits\LogsActivity;
+use App\Models\Access\Role;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use SoftDeletes,
+        HasApiTokens,
+        HasFactory,
+        Notifiable,
+        LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -19,8 +26,10 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
+        'avatar',
     ];
 
     /**
@@ -41,4 +50,43 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * The attributes that should be store into logs activity.
+     *
+     * @var array
+     */
+    protected static $logAttributes = [
+        'name',
+        'email',
+        'avatar',
+    ];
+
+    /**
+     * The attributes that are mass assignable into logs activity.
+     *
+     * @var string[]
+     */
+    protected static $logFillable = [
+        'name',
+        'email',
+        'avatar',
+    ];
+
+    protected static $logName = 'User';
+
+    public function getDesciptionForEvent(string $eventName): string
+    {
+        return "This model has been {$eventName}";
+    }
+
+    /**
+     * The roles that belong to the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function roles(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Role::class, 'user_roles');
+    }
 }
