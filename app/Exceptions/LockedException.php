@@ -2,9 +2,9 @@
 
 namespace App\Exceptions;
 
-use Exception;
+use RuntimeException;
 
-class LockedException extends Exception
+class LockedException extends RuntimeException
 {
     //
 }
