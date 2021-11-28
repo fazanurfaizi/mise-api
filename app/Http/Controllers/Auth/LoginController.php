@@ -10,6 +10,7 @@ use App\Models\User\User;
 use App\Models\Auth\UserVerification;
 use App\Notifications\VerifyEmailNotification;
 use App\Services\Auth\TokenManager;
+use App\Services\Auth\AuthenticateUser;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
@@ -60,9 +61,9 @@ class LoginController extends Controller
      */
     public function me()
     {
-        $payload = JWTAuth::parseToken()->getPayload();
+        $user = AuthenticateUser::getUser();
 
-        return response()->json($payload);
+        return response()->json($user);
     }
 
     public function logout(Request $request)
