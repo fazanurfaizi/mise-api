@@ -21,7 +21,14 @@ class TokenManager
 
     public function createToken(bool $remember = false): self
     {
-        $this->token = JWTAuth::fromUser($this->user);
+        if ($remember) {
+            $expired = Carbon::now()->addMinutes(config('auth.expired_token.remember'))->timestamp;
+        } else {
+            $expired = Carbon::now()->addMinutes(config('auth.expired_token.default'))->timestamp;
+        }
+
+        $this->token = JWTAuth::customClaims(['exp' => $expired])
+            ->fromUser($this->user);
 
         return $this;
     }

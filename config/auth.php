@@ -71,6 +71,24 @@ return [
         // ],
     ],
 
+    /**
+     * Configuration for authentication expired token.
+     */
+    'expired_token' => [
+
+        /**
+         * Expired token for default authentication
+         * (remember me is false).
+         */
+        'default' => 60 * 24,
+
+        /**
+         * Expired token for remember is true.
+         */
+        'remember' => 60 * 24 * 30,
+
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords
