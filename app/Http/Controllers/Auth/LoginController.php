@@ -33,6 +33,7 @@ class LoginController extends Controller
 
         $credentials = $request->only($username, 'password');
 
+        DB::beginTransaction();
         if($token = Auth::attempt($credentials)) {
             $user = Auth::user();
 
@@ -46,8 +47,12 @@ class LoginController extends Controller
                 ], Response::HTTP_LOCKED);
             }
 
+            DB::commit();
+
             return TokenManager::fromUser($user)->createToken($remember)->response();
         } else {
+            DB::rollback();
+
             return response()->json([
                 'message' => 'Incorrect email or password'
             ], Response::HTTP_UNAUTHORIZED);
@@ -64,6 +69,17 @@ class LoginController extends Controller
         $user = AuthenticateUser::getUser();
 
         return response()->json($user);
+    }
+
+    public function refresh()
+    {
+        try {
+            return TokenManager::fromAuth()->refreshToken(true, true)->response();
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], Response::HTTP_UNAUTHORIZED);
+        }
     }
 
     public function logout(Request $request)
@@ -84,6 +100,9 @@ class LoginController extends Controller
     private function checkIfUserHasVerifiedEmail(User $user, Request $request)
     {
         if(!$user->hasVerifiedEmail()) {
+
+            UserVerification::where('email', $user->email)->delete();
+
             UserVerification::create([
                 'email' => $user->email,
                 'token' => (string) Str::uuid()
@@ -92,6 +111,7 @@ class LoginController extends Controller
             Notification::send($user, new VerifyEmailNotification($user->userVerification->token));
 
             // logout
+            $this->logout($request);
 
             $message = __(
                 'We sent a confirmation email to :email. Please follow the instructions to complete your registration.',

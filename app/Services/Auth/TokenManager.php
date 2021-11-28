@@ -33,9 +33,11 @@ class TokenManager
         return $this;
     }
 
-    public function refreshToken(): self
+    // Pass true as the first param to force the token to be blacklisted "forever".
+    // The second parameter will reset the claims for the new token
+    public function refreshToken(bool $blacklisted = false, bool $reset = false): self
     {
-        $this->token = JWTAuth::refresh(true, true);
+        $this->token = JWTAuth::refresh($blacklisted, $reset);
 
         return $this;
     }

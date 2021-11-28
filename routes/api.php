@@ -25,6 +25,7 @@ Route::group(['as' => 'auth.', 'prefix' => 'auth'], function() {
 
     Route::group(['middleware' => 'jwt.verify'], function() {
         Route::get('/me', [LoginController::class, 'me'])->name('me');
+        Route::post('/refresh', [LoginController::class, 'refresh'])->name('refresh');
         Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     });
 });
