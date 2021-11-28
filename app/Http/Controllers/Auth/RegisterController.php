@@ -6,8 +6,11 @@ use Exception;
 use App\Models\User\User;
 use App\Models\Access\Role;
 use App\Models\Access\UserRole;
+use App\Models\Auth\UserVerification;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
+use Illuminate\Support\Str;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\Auth\RegisterRequest;
@@ -34,6 +37,13 @@ class RegisterController extends Controller
                 'role_id' => $role->id
             ]);
 
+            UserVerification::create([
+                'email' => $user->email,
+                'token' => (string) Str::uuid()
+            ]);
+
+            event(new Registered($user));
+
             DB::commit();
 
             $message = __(
@@ -46,6 +56,10 @@ class RegisterController extends Controller
             ], Response::HTTP_OK);
         } catch (Exception $e) {
             DB::rollback();
+
+            return response()->json([
+                'message' => $e->getMessage()
+            ]);
         }
     }
 
