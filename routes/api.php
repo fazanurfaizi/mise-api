@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\EmailVerificationController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +24,8 @@ Route::group(['as' => 'auth.', 'prefix' => 'auth'], function() {
         Route::post('/register', [RegisterController::class, 'register'])->name('register');
         Route::post('/login', [LoginController::class, 'login'])->name('login');
         Route::post('/verify/{token}', [EmailVerificationController::class, 'verify'])->name('verify');
+        Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('forgot-password');
+        Route::post('/reset-password/{token}', [ResetPasswordController::class, 'reset'])->name('reset-password');
     });
 
     Route::group(['middleware' => 'jwt.verify'], function() {
