@@ -21,6 +21,7 @@ Route::group(['as' => 'auth.', 'prefix' => 'auth'], function() {
     Route::group(['middleware' => 'guest'], function() {
         Route::post('/register', [RegisterController::class, 'register'])->name('register');
         Route::post('/login', [LoginController::class, 'login'])->name('login');
+        Route::post('/verify/{token}', [EmailVerificationController::class, 'verify'])->name('verify');
     });
 
     Route::group(['middleware' => 'jwt.verify'], function() {
@@ -28,8 +29,4 @@ Route::group(['as' => 'auth.', 'prefix' => 'auth'], function() {
         Route::post('/refresh', [LoginController::class, 'refresh'])->name('refresh');
         Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     });
-});
-
-Route::group(['as' => 'email.', 'prefix' => 'email'], function() {
-    Route::post('/verify/{token}', [EmailVerificationController::class, 'verify'])->name('verify');
 });
