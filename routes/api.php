@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\EmailVerificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +16,13 @@ use App\Http\Controllers\Auth\RegisterController;
 |
 */
 
-Route::post('/register', [RegisterController::class, 'register'])->name('register');
+Route::group(['middleware' => 'guest'], function() {
+    Route::group(['as' => 'auth.', 'prefix' => 'auth'], function() {
+        Route::post('/register', [RegisterController::class, 'register'])->name('register');
+    });
+
+    Route::group(['as' => 'email.', 'prefix' => 'email'], function() {
+        Route::post('/verify/{token}', [EmailVerificationController::class, 'verify'])->name('verify');
+    });
+});
+

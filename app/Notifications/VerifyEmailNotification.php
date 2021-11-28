@@ -49,7 +49,7 @@ class VerifyEmailNotification extends Notification implements ShouldQueue
             ->subject(__(':app_name - Confirm your registration', ['app_name' => config('app.name')]))
             ->greeting(__('Welcome to :app_name', ['app_name' => config('app.name')]))
             ->line(__('Click the link below to complete verification:'))
-            ->action(__('Verify Email'), config('app.url'))
+            ->action(__('Verify Email'), route('api.email.verify', $this->token))
             ->line('<b>' . __('5 Security Tips') . '</b>')
             ->line('<small>' . __('DO NOT give your password to anyone!') . '<br>' .
                 __(
