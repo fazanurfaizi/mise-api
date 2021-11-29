@@ -73,7 +73,7 @@ trait TwoFactorAuthenticator
     {
         $this->twoFactorAuth->flushAuth()->delete();
 
-        event(new TwoFactorrDisabled($this));
+        event(new TwoFactorDisabled($this));
     }
 
     /**

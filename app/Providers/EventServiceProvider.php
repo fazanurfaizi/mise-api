@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Events\TwoFactor\TwoFactorRecoveryCodesGenerated;
+use App\Events\TwoFactor\TwoFactorDisabled;
 use App\Listeners\UserRegisteredListener;
 use App\Listeners\TwoFactorRecoveryCodesGeneratedListener;
+use App\Listeners\TwoFactorDisabledListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -22,6 +24,10 @@ class EventServiceProvider extends ServiceProvider
 
         TwoFactorRecoveryCodesGenerated::class => [
             TwoFactorRecoveryCodesGeneratedListener::class,
+        ],
+
+        TwoFactorDisabled::class => [
+            TwoFactorDisabledListener::class,
         ],
     ];
 

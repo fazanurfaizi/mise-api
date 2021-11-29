@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cache;
 
 class TwoFactorAuthenticationController extends Controller
 {
@@ -45,8 +47,10 @@ class TwoFactorAuthenticationController extends Controller
             if($request->user()->confirmTwoFactorAuth($request->get('code'))) {
                 $request->user()->generateRecoveryCodes();
 
+                Cache::put("2fa.{$request->ip()}-{$request->user()->id}", now()->timestamp, config('auth2fa.confirm.timeout', 10800));
+
                 return response()->json([
-                    'message' => __('Activate 2-Step Verification - Google Authenticator.')
+                    'message' => __('auth.2fa.enabled')
                 ], Response::HTTP_OK);
             }
         } catch (Exception $e) {
@@ -54,7 +58,31 @@ class TwoFactorAuthenticationController extends Controller
         }
 
         return response()->json([
-            'message' => __('Invalid 2FA verification code. Please try again')
+            'message' => __('auth.2fa.enable')
         ], Response::HTTP_LOCKED);
+    }
+
+    /**
+     * Disable the 2fa of current logged user.
+     *
+     * @param DisableTwoFactorAuthenticationRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function disable(DisableTwoFactorAuthenticationRequest $request)
+    {
+        $user = $request->user();
+
+        if(!Hash::check($request->get('password'), $user->password)) {
+            return response()->json([
+                'message' => __('auth.password')
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $user->disableTwoFactorAuth();
+
+        return response()->json([
+            'message' => __('auth.2fa.disabled')
+        ], Response::HTTP_OK);
     }
 }
