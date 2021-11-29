@@ -36,6 +36,7 @@ Route::group(['as' => 'auth.', 'prefix' => 'auth'], function() {
 
         Route::group(['as' => '2fa.'], function() {
             Route::post('/generate-2fa', [TwoFactorAuthenticationController::class, 'generate'])->name('generate');
+            Route::post('/enable-2fa', [TwoFactorAuthenticationController::class, 'enable'])->name('enable');
         });
 
     });

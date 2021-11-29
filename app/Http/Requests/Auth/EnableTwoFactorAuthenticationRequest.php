@@ -24,7 +24,7 @@ class EnableTwoFactorAuthenticationRequest extends FormRequest
     public function rules()
     {
         return [
-            'otp' => 'required|string|size:6'
+            'code' => 'required|string|size:6'
         ];
     }
 }
