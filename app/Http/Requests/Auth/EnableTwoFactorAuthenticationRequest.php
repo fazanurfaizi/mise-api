@@ -4,7 +4,7 @@ namespace App\Http\Requests\Auth;
 
 use App\Http\Requests\FormRequest;
 
-class LoginRequest extends FormRequest
+class EnableTwoFactorAuthenticationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +24,7 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'username' => 'string|required',
-            'password' => 'string|required',
-            'remember' => 'nullable|boolean'
+            'otp' => 'required|string|size:6'
         ];
     }
 }

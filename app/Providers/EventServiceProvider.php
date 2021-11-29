@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
-use Illuminate\Auth\Events\Registered;
+use App\Events\TwoFactor\TwoFactorRecoveryCodesGenerated;
 use App\Listeners\UserRegisteredListener;
+use App\Listeners\TwoFactorRecoveryCodesGeneratedListener;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -16,6 +18,10 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             UserRegisteredListener::class,
+        ],
+
+        TwoFactorRecoveryCodesGenerated::class => [
+            TwoFactorRecoveryCodesGeneratedListener::class,
         ],
     ];
 

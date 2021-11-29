@@ -62,6 +62,7 @@ class Handler extends ExceptionHandler
 
         switch ($exceptionInstance) {
             case AuthenticationException::class:
+            case InvalidTwoFactorException::class:
                 $status = Response::HTTP_UNAUTHORIZED;
                 $message = $exception->getMessage();
                 break;

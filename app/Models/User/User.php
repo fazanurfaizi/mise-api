@@ -4,6 +4,8 @@ namespace App\Models\User;
 
 use App\Models\Access\Role;
 use App\Models\Auth\UserVerification;
+use App\Contracts\Auth\TwoFactorAuthenticatable;
+use App\Traits\TwoFactor\TwoFactorAuthenticator;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,12 +15,13 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable implements JWTSubject, TwoFactorAuthenticatable
 {
     use SoftDeletes,
         HasFactory,
         Notifiable,
-        LogsActivity;
+        LogsActivity,
+        TwoFactorAuthenticator;
 
     /**
      * The attributes that are mass assignable.

@@ -394,6 +394,20 @@
                                             </table>
                                         @endif
 
+                                        @if (isset($recoveryCodes))
+                                            <table class="pt-2 text-grey-darker leading-normal"
+                                                cellpadding="0"
+                                                cellspacing="0"
+                                                role="presentation">
+                                                {{-- recoveryCodess --}}
+                                                @foreach ($recoveryCodes as $key => $value)
+                                                    <p>
+                                                        {{ $recoveryCodes[$key]['code'] }}
+                                                    </p>
+                                                @endforeach
+                                            </table>
+                                        @endif
+
                                         <table class="pt-2 text-grey-darker leading-normal"
                                             cellpadding="0"
                                             cellspacing="0"

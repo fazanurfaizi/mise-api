@@ -6,12 +6,16 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "bacon/bacon-qr-code": "^2.0",
+        "doctrine/dbal": "^3.2",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "ibrunotome/google2fa-laravel": "^1.0",
         "laravel/framework": "^8.65",
         "laravel/tinker": "^2.5",
+        "paragonie/constant_time_encoding": "^2.4",
         "spatie/laravel-activitylog": "^4.3",
-        "tymon/jwt-auth": "^1.0"
+        "tymon/jwt-auth": "dev-develop"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\TwoFactorAuthenticationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,5 +33,10 @@ Route::group(['as' => 'auth.', 'prefix' => 'auth'], function() {
         Route::get('/me', [LoginController::class, 'me'])->name('me');
         Route::post('/refresh', [LoginController::class, 'refresh'])->name('refresh');
         Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+        Route::group(['as' => '2fa.'], function() {
+            Route::post('/generate-2fa', [TwoFactorAuthenticationController::class, 'generate'])->name('generate');
+        });
+
     });
 });
