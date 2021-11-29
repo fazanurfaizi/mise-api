@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\TwoFactorAuthenticationController;
+use App\Http\Controllers\Auth\AuthorizeDeviceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,5 +45,12 @@ Route::group(['as' => 'auth.', 'prefix' => 'auth'], function() {
 
         });
 
+    });
+});
+
+Route::group(['as' => 'devices', 'prefix' => 'devices'], function() {
+    Route::group(['middleware' => 'jwt.verify'], function() {
+        Route::get('/', [AuthorizeDeviceController::class, 'index'])->name('index');
+        Route::get('/{id}', [AuthorizeDeviceController::class, 'logoutDevice'])->name('logoutDevice');
     });
 });

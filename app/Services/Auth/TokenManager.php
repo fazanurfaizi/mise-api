@@ -6,8 +6,11 @@ use stdClass;
 use Carbon\Carbon;
 use App\Models\User\User;
 use App\Models\Auth\PersonalAccessToken;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class TokenManager
@@ -19,7 +22,7 @@ class TokenManager
         $this->user = $user;
     }
 
-    public function createToken(bool $remember = false): self
+    public function createToken(Request $request, bool $remember = false): self
     {
         if ($remember) {
             $expired = Carbon::now()->addMinutes(config('auth.expired_token.remember'))->timestamp;
@@ -29,6 +32,13 @@ class TokenManager
 
         $this->token = JWTAuth::customClaims(['exp' => $expired])
             ->fromUser($this->user);
+
+        PersonalAccessToken::create([
+            'user_id' => $this->user->id,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->header('User-Agent'),
+            'token' => Crypt::encrypt($this->token),
+        ]);
 
         return $this;
     }

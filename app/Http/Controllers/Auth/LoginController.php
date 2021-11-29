@@ -49,7 +49,7 @@ class LoginController extends Controller
 
             DB::commit();
 
-            return TokenManager::fromUser($user)->createToken($remember)->response();
+            return TokenManager::fromUser($user)->createToken($request, $remember)->response();
         } else {
             DB::rollback();
 
