@@ -12,6 +12,8 @@ use App\Http\Controllers\Auth\TwoFactorAuthenticationController;
 use App\Http\Controllers\Auth\AuthorizeDeviceController;
 
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\PermissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,7 +62,10 @@ Route::group(['as' => 'devices', 'prefix' => 'devices'], function() {
 
 Route::group(['as' => 'admin', 'prefix' => 'admin', 'middleware' => 'jwt.verify'], function() {
     Route::apiResource('users', UserController::class);
-    // Route::group(['as' => 'users', 'prefix' => 'users'], function() {
-    //     Route::get('/', [UserController::class, 'index'])->name('index');
-    // });
+
+    Route::apiResource('roles', RoleController::class);
+    Route::post('assign-roles', [RoleController::class, 'assign']);
+
+    Route::apiResource('permissions', PermissionController::class);
+    Route::post('/generate-permissions', [PermissionController::class, 'generate'])->name('generate');
 });

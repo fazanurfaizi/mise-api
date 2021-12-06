@@ -43,45 +43,6 @@ class Permission extends Model
     }
 
     /**
-     * Generate permission for specific table.
-     *
-     * @param   string  $table_name
-     * @param   boolean $is_maintenance
-     *
-     * @return  void
-     */
-    public static function generateFor($table_name, $is_maintenance = false): void
-    {
-        $permissions = [];
-        $permissions[] = self::firstOrCreate(['key' => "browse_{$table_name}", 'description' => "Browse {$table_name}", 'table_name' => $table_name]);
-        $permissions[] = self::firstOrCreate(['key' => "read_{$table_name}", 'description' => "Read {$table_name}", 'table_name' => $table_name]);
-        $permissions[] = self::firstOrCreate(['key' => "edit_{$table_name}", 'description' => "Edit {$table_name}", 'table_name' => $table_name]);
-        $permissions[] = self::firstOrCreate(['key' => "add_{$table_name}", 'description' => "Add {$table_name}", 'table_name' => $table_name]);
-        $permissions[] = self::firstOrCreate(['key' => "delete_{$table_name}", 'description' => "Delete {$table_name}", 'table_name' => $table_name]);
-
-        if($is_maintenance) {
-            $permissions[] = self::firstOrCreate(['key' => "maintenance_{$table_name}", 'description' => "Maintenance {$table_name}", 'table_name' => $table_name]);
-        }
-
-        $administrator = Role::where('name', 'administrator')->firstOrFail();
-
-        if(!is_null($administrator)) {
-            foreach ($permissions as $permission) {
-                $rolePermission = RolePermission::where('role_id', $administrator->id)
-                    ->where('permission_id', $permission->id)
-                    ->first();
-
-                if(is_null($rolePermission)) {
-                    $rolePermission = new RolePermission();
-                    $rolePermission->role_id = $administrator->id;
-                    $rolePermission->permission_id = $permission->id;
-                    $rolePermission->save();
-                }
-            }
-        }
-    }
-
-    /**
      * Remove permission for specific table.
      *
      * @param   string  $table_name

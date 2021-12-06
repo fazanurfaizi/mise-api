@@ -6,6 +6,7 @@ use DB;
 use Exception;
 use App\Models\User\User;
 use App\Models\Access\Role;
+use App\Http\Resources\User\UserCollection;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -22,10 +23,10 @@ class UserController extends Controller
     public function index(Request  $request)
     {
         $users = QueryBuilder::for(User::class)
-            ->allowedFields(['id', 'name', 'username', 'email'])
+            ->allowedFields(['id', 'name', 'username', 'email', 'avatar'])
             ->allowedFilters(['name', 'email'])
             ->defaultSort('-created_at')
-            ->allowedSorts('name', 'email', 'created_at')
+            ->allowedSorts('id', 'name', 'email', 'created_at')
             ->jsonPaginate();
 
         return response()->json([
