@@ -69,8 +69,7 @@ class RegisterController extends Controller
 
         if (is_null($role)) {
             $role = Role::create([
-                'name' => 'customer',
-                'display_name' => 'Customer'
+                'name' => 'customer'
             ]);
         }
 

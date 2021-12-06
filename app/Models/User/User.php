@@ -14,12 +14,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements JWTSubject, TwoFactorAuthenticatable
 {
     use SoftDeletes,
         HasFactory,
         Notifiable,
+        HasRoles,
         LogsActivity,
         TwoFactorAuthenticator;
 
@@ -54,16 +56,6 @@ class User extends Authenticatable implements JWTSubject, TwoFactorAuthenticatab
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    /**
-     * The roles that belong to the User
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function roles(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
-    {
-        return $this->belongsToMany(Role::class, 'user_roles');
-    }
 
     /**
      * Get the userVerification that owns the User

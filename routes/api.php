@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\EmailVerificationController;
@@ -9,6 +10,8 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\TwoFactorAuthenticationController;
 use App\Http\Controllers\Auth\AuthorizeDeviceController;
+
+use App\Http\Controllers\Admin\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,4 +56,11 @@ Route::group(['as' => 'devices', 'prefix' => 'devices'], function() {
         Route::get('/', [AuthorizeDeviceController::class, 'index'])->name('index');
         Route::get('/{id}', [AuthorizeDeviceController::class, 'logoutDevice'])->name('logoutDevice');
     });
+});
+
+Route::group(['as' => 'admin', 'prefix' => 'admin', 'middleware' => 'jwt.verify'], function() {
+    Route::apiResource('users', UserController::class);
+    // Route::group(['as' => 'users', 'prefix' => 'users'], function() {
+    //     Route::get('/', [UserController::class, 'index'])->name('index');
+    // });
 });

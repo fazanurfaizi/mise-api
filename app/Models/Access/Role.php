@@ -3,7 +3,7 @@
 namespace App\Models\Access;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Spatie\Permission\Models\Role as Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
@@ -12,44 +12,16 @@ class Role extends Model
     use HasFactory,
         LogsActivity;
 
-    protected $guarded = [];
-
-    protected $fillable = [
-        'name',
-        'display_name',
-    ];
-
     /**
-     * The users that belong to the Role
+     * The "booted" method of the model.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return void
      */
-    public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    protected static function booted()
     {
-        return $this->belongsToMany(User::class, 'user_roles')
-            ->select('users.*')
-            ->union($this->hasMany(User::class))
-            ->getQuery();
-    }
-
-    /**
-     * Get the userRoles that owns the Role
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function userRoles(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(UserRole::class, 'role_id');
-    }
-
-    /**
-     * The permissions that belong to the Role
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function permissions(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
-    {
-        return $this->belongsToMany(Permission::class, 'role_permissions');
+        static::creating(function ($permission) {
+            $permission->guard_name = 'api';
+        });
     }
 
     protected static $logAttributes = true;

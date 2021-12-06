@@ -3,7 +3,7 @@
 namespace App\Models\Access;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Spatie\Permission\Models\Permission as Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
@@ -11,26 +11,16 @@ class Permission extends Model
 {
     use HasFactory, LogsActivity;
 
-    protected $guarded = [];
-
     /**
-     * The roles that belong to the Permission
+     * The "booted" method of the model.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return void
      */
-    public function roles(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    protected static function booted()
     {
-        return $this->belongsToMany(Role::class, 'role_permissions');
-    }
-
-    /**
-     * Get the rolePermission that owns the Permission
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function rolePermission(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(RolePermission::class);
+        static::creating(function ($permission) {
+            $permission->guard_name = 'api';
+        });
     }
 
     protected static $logAttributes = true;
