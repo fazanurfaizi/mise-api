@@ -15,7 +15,7 @@ class CreateProductCategoriesTable extends Migration
     {
         Schema::create('product_categories', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('parent_id')->unsigned();
+            $table->bigInteger('parent_id')->nullable()->unsigned();
             $table->foreign('parent_id')->references('id')->on('product_categories')->onDelete('cascade');
             $table->string('name', 255);
             $table->string('slug', 255)->unique();

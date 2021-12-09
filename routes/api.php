@@ -14,6 +14,7 @@ use App\Http\Controllers\Auth\AuthorizeDeviceController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\ProductCategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,4 +69,16 @@ Route::group(['as' => 'admin', 'prefix' => 'admin', 'middleware' => 'jwt.verify'
 
     Route::apiResource('permissions', PermissionController::class);
     Route::post('/generate-permissions', [PermissionController::class, 'generate'])->name('generate');
+
+    Route::apiResource('product-categories', ProductCategoryController::class)->parameters([
+        'product-categories' => 'id',
+    ]);
+    Route::group(['as' => 'product-categories'], function() {
+        Route::get('product-categories-bin', [ProductCategoryController::class, 'browseBin'])->name('browse-bin');
+        Route::delete('product-categories-forceDestroy/{id}', [ProductCategoryController::class, 'forceDestroy'])->name('force-destroy');
+        Route::post('product-categories-multipleDestroy', [ProductCategoryController::class, 'multipleDestroy'])->name('multiple-destroy');
+        Route::post('product-categories-multipleForceDestroy', [ProductCategoryController::class, 'multipleForceDestroy'])->name('multiple-force-destroy');
+        Route::put('product-categories-restore/{id}', [ProductCategoryController::class, 'restore'])->name('restore');
+        Route::put('product-categories-multipleRestore/{id}', [ProductCategoryController::class, 'multipleRestore'])->name('multiple-restore');
+    });
 });
