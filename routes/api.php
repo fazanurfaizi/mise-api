@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ProductCategoryController;
+use App\Http\Controllers\Admin\VariantController;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,6 +80,18 @@ Route::group(['as' => 'admin', 'prefix' => 'admin', 'middleware' => 'jwt.verify'
         Route::post('product-categories-multipleDestroy', [ProductCategoryController::class, 'multipleDestroy'])->name('multiple-destroy');
         Route::post('product-categories-multipleForceDestroy', [ProductCategoryController::class, 'multipleForceDestroy'])->name('multiple-force-destroy');
         Route::put('product-categories-restore/{id}', [ProductCategoryController::class, 'restore'])->name('restore');
-        Route::put('product-categories-multipleRestore/{id}', [ProductCategoryController::class, 'multipleRestore'])->name('multiple-restore');
+        Route::put('product-categories-multipleRestore', [ProductCategoryController::class, 'multipleRestore'])->name('multiple-restore');
+    });
+
+    Route::apiResource('variants', VariantController::class)->parameters([
+        'variants' => 'id',
+    ]);
+    Route::group(['as' => 'variants'], function() {
+        Route::get('variants-bin', [VariantController::class, 'browseBin'])->name('browse-bin');
+        Route::delete('variants-forceDestroy/{id}', [VariantController::class, 'forceDestroy'])->name('force-destroy');
+        Route::post('variants-multipleDestroy', [VariantController::class, 'multipleDestroy'])->name('multiple-destroy');
+        Route::post('variants-multipleForceDestroy', [VariantController::class, 'multipleForceDestroy'])->name('multiple-force-destroy');
+        Route::put('variants-restore/{id}', [VariantController::class, 'restore'])->name('restore');
+        Route::put('variants-multipleRestore', [VariantController::class, 'multipleRestore'])->name('multiple-restore');
     });
 });

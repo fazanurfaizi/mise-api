@@ -29,14 +29,4 @@ class Variant extends Model
     {
         return $this->belongsToMany(Product::class, ProductVariant::class);
     }
-
-    /**
-     * Get all of the variants for the Variant
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
-     */
-    public function variants(): HasManyThrough
-    {
-        return $this->hasManyThrough(Comment::class, Post::class);
-    }
 }

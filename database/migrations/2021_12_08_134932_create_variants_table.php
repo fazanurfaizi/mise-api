@@ -15,7 +15,7 @@ class CreateVariantsTable extends Migration
     {
         Schema::create('variants', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('parent_id')->unsigned();
+            $table->bigInteger('parent_id')->nullable()->unsigned();
             $table->foreign('parent_id')->references('id')->on('variants')->onDelete('cascade');
             $table->string('name', 255)->unique();
             $table->timestamps();
