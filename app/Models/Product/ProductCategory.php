@@ -2,7 +2,7 @@
 
 namespace App\Models\Product;
 
-use App\Models\Concerns\SelfReference;
+use App\Traits\Models\SelfReference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;

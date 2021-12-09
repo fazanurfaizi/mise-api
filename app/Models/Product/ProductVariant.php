@@ -2,29 +2,72 @@
 
 namespace App\Models\Product;
 
-use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ProductVariant extends Pivot
+class ProductVariant extends Model
 {
-    /**
-     * A membership is a user assigned to a location
-     *
-     * @var string
-     */
-    protected $table = 'product_variant';
+    use HasFactory;
 
     /**
-     * Indicates if the IDs are auto-incrementing.
+     * Fields that can be mass assigned
      *
-     * @var bool
+     * @var array
      */
-    public $incrementing = false;
+    protected $fillable = [
+        'product_id',
+        'product_sku_id',
+        'attribute_id',
+        'attribute_value_id'
+    ];
 
     /**
-     * Indicates if the model should be timestamped.
+     * Protected fields during mass assigned
      *
-     * @var bool
+     * @var array
      */
-    public $timestamps = false;
+    protected $guarded = [
+        'id'
+    ];
 
+    /**
+     * Get the product that owns the ProductVariant
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    /**
+     * Get the productSku that owns the ProductVariant
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function productSku(): BelongsTo
+    {
+        return $this->belongsTo(ProductSku::class, 'product_sku_id');
+    }
+
+    /**
+     * Get the attribute that owns the ProductVariant
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function attribute(): BelongsTo
+    {
+        return $this->belongsTo(Attribute::class, 'attribute_id');
+    }
+
+    /**
+     * Get the option that owns the ProductVariant
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function option(): BelongsTo
+    {
+        return $this->belongsTo(AttributeValue::class, 'attribute_value_id');
+    }
 }

@@ -2,24 +2,51 @@
 
 namespace App\Models\Product;
 
+use App\Traits\Models\Sluggable;
+use App\Traits\Models\HasAttributes;
+use App\Traits\Models\HasVariants;
+use App\Traits\Models\HasInventory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
     use HasFactory,
-        SoftDeletes;
+        SoftDeletes,
+        Sluggable,
+        HasAttributes,
+        HasVariants,
+        HasInventory;
 
+    /**
+	 * Fields that are mass assignable
+	 *
+	 * @var array
+	 */
     protected $fillable = [
         'product_category_id',
         'name',
         'slug',
         'description'
     ];
+
+    /**
+	 * Guarded Fields
+	 *
+	 * @var array
+	 */
+	protected $guarded = [
+		'id', 'created_at', 'updated_at'
+	];
+
+    /**
+	 * Sluggable field of the model
+	 *
+	 * @var string
+	 */
+	protected $sluggable = 'name';
 
     /**
      * Get the category that owns the Product
@@ -29,26 +56,6 @@ class Product extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(ProductCategory::class, 'product_category_id', 'id');
-    }
-
-    /**
-     * The variants that belong to the Product
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function variants(): BelongsToMany
-    {
-        return $this->belongsToMany(Variant::class, ProductVariant::class);
-    }
-
-    /**
-     * Get all of the details for the Product
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function details(): HasMany
-    {
-        return $this->hasMany(ProductDetail::class, 'product_id', 'id');
     }
 
 }

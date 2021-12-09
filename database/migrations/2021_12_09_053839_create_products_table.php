@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddProductCategoryIdToProductsTable extends Migration
+class CreateProductsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,15 @@ class AddProductCategoryIdToProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        Schema::create('products', function (Blueprint $table) {
+            $table->id();
             $table->bigInteger('product_category_id')->unsigned();
             $table->foreign('product_category_id')->references('id')->on('product_categories')->onDelete('cascade');
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->text('description')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -26,9 +32,6 @@ class AddProductCategoryIdToProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropForeign('products_product_category_id_foreign');
-            $table->dropColumn('product_category_id');
-        });
+        Schema::dropIfExists('products');
     }
 }
