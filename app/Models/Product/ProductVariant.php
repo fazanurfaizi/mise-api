@@ -10,6 +10,8 @@ class ProductVariant extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     /**
      * Fields that can be mass assigned
      *
