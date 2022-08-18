@@ -32,10 +32,7 @@ class RegisterController extends Controller
 
             $role = $this->getCustomerRole();
 
-            UserRole::create([
-                'user_id' => $user->id,
-                'role_id' => $role->id
-            ]);
+            $user->assignRole($role->name);
 
             UserVerification::create([
                 'email' => $user->email,

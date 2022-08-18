@@ -3,6 +3,7 @@
 namespace App\Models\Access;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission as Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
@@ -53,7 +54,7 @@ class Permission extends Model
     {
         $permissions = self::where(['table_name' => $table_name])->get();
         $permissions = collect($permissions)->pluck('id')->toArray();
-        RolePermission::whereIn('permission_id', $permissions)->delete();
+        DB::table('role_has_permissions')->whereIn('permission_id', $permissions)->delete();
         self::where(['table_name' => $table_name])->delete();
     }
 }
