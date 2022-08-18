@@ -27,4 +27,25 @@ trait SelfReference
             ? $this->parent->root()
             : $this;
     }
+
+    /**
+	 * Assert if the Category is Parent
+	 *
+	 * @return bool
+	 */
+	public function isParent(): bool
+	{
+		return is_null($this->parent_id);
+	}
+
+	/**
+	 * Local scope for getting only the parents
+	 *
+	 * @param  \Illuminate\Database\Eloquent\Builder  $query
+	 * @return \Illuminate\Database\Eloquent\Builder
+	 */
+	public function scopeParentOnly($query)
+	{
+		return $query->whereNull('parent_id');
+	}
 }

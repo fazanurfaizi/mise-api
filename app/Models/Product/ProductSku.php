@@ -57,6 +57,6 @@ class ProductSku extends Model
      */
     public function stocks(): HasMany
     {
-        return $this->hasMany(InventoryStock::classs);
+        return $this->hasMany(InventoryStock::class);
     }
 }

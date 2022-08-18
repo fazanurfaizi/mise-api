@@ -2,10 +2,10 @@
 
 namespace App\Traits\Models;
 
-use DB;
 use Exception;
 use App\Models\Product\ProductAttribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 trait HasAttributes
 {

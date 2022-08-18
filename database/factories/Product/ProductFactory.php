@@ -20,7 +20,7 @@ class ProductFactory extends Factory
     {
         $title = $this->faker->words(rand(1, 3), true);
         return [
-            'product_category_id' => ProductCategory::factory()->create()->id,
+            'category_id' => ProductCategory::factory()->create()->id,
             'name' => $title,
             'slug' => Str::slug($title),
             'description' => $this->faker->sentence(10, true),
