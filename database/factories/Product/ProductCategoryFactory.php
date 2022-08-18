@@ -20,7 +20,7 @@ class ProductCategoryFactory extends Factory
         $title = $this->faker->words(rand(1, 4), true);
 
         return [
-            'name' => $this->faker->words(rand(1, 4), true),
+            'name' => $this->faker->unique()->words(rand(1, 4), true),
             'slug' => Str::slug($title),
             'description' => $this->faker->sentence,
             'parent_id' => null

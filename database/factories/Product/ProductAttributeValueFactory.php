@@ -19,7 +19,7 @@ class ProductAttributeValueFactory extends Factory
     {
         return [
             'attribute_id' => ProductAttribute::factory()->create()->id,
-            'name' => $this->faker->word,
+            'value' => $this->faker->word,
         ];
     }
 }

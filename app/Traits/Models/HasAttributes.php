@@ -2,6 +2,7 @@
 
 namespace App\Traits\Models;
 
+use App\Exceptions\InvalidAttributeException;
 use Exception;
 use App\Models\Product\ProductAttribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -147,7 +148,7 @@ trait HasAttributes
         $attribute = $this->attributes()->where('name', $option)->first();
 
         if(!$attribute) {
-            throw new Exception("Invalid attriibute", 422);
+            throw new InvalidAttributeException("Invalid attriibute", 422);
         }
 
         return $attribute->addValue($value);
@@ -168,7 +169,7 @@ trait HasAttributes
      */
     public function attributes(): HasMany
     {
-        return $this->hasMany(ProductAttribute::class);
+        return $this->hasMany(ProductAttribute::class, 'product_id', 'id');
     }
 
 }
