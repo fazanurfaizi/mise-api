@@ -60,7 +60,7 @@ class ProductVariant extends Model
      */
     public function attribute(): BelongsTo
     {
-        return $this->belongsTo(Attribute::class, 'attribute_id');
+        return $this->belongsTo(ProductAttribute::class, 'attribute_id');
     }
 
     /**
@@ -70,6 +70,6 @@ class ProductVariant extends Model
      */
     public function option(): BelongsTo
     {
-        return $this->belongsTo(AttributeValue::class, 'attribute_value_id');
+        return $this->belongsTo(ProductAttributeValue::class, 'attribute_value_id');
     }
 }

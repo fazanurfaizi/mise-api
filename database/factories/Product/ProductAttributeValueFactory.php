@@ -2,13 +2,13 @@
 
 namespace Database\Factories\Product;
 
-use App\Models\Product\Attribute;
-use App\Models\Product\AttributeValue;
+use App\Models\Product\ProductAttribute;
+use App\Models\Product\ProductAttributeValue;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class AttributeValueFactory extends Factory
+class ProductAttributeValueFactory extends Factory
 {
-    protected $model = AttributeValue::class;
+    protected $model = ProductAttributeValue::class;
 
     /**
      * Define the model's default state.
@@ -18,7 +18,7 @@ class AttributeValueFactory extends Factory
     public function definition()
     {
         return [
-            'attribute_id' => Attribute::factory()->create()->id,
+            'attribute_id' => ProductAttribute::factory()->create()->id,
             'name' => $this->faker->word,
         ];
     }

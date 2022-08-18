@@ -30,6 +30,6 @@ class ProductCategory extends Model
      */
     public function products(): HasMany
     {
-        return $this->hasMany(Product::class, 'foreign_key', 'local_key');
+        return $this->hasMany(Product::class, 'category_id', 'id');
     }
 }

@@ -4,8 +4,7 @@ namespace App\Traits\Models;
 
 use DB;
 use Exception;
-use App\Models\Product\Attribute;
-use Illminate\Http\Response;
+use App\Models\Product\ProductAttribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait HasAttributes
@@ -141,7 +140,7 @@ trait HasAttributes
 	 * @param string $option
 	 * @param mixed $value
 	 * @throws Exception
-	 * @return App\Models\Product\AttributeValue
+	 * @return App\Models\Product\ProductAttributeValue
 	 */
     public function addAttributeTerm(string $option, $value)
     {
@@ -169,7 +168,7 @@ trait HasAttributes
      */
     public function attributes(): HasMany
     {
-        return $this->hasMany(Attribute::class);
+        return $this->hasMany(ProductAttribute::class);
     }
 
 }

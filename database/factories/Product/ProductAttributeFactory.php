@@ -3,12 +3,12 @@
 namespace Database\Factories\Product;
 
 use App\Models\Product\Product;
-use App\Models\Product\Attribute;
+use App\Models\Product\ProductAttribute;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class AttributeFactory extends Factory
+class ProductAttributeFactory extends Factory
 {
-    protected $model = Attribute::class;
+    protected $model = ProductAttribute::class;
 
     /**
      * Define the model's default state.

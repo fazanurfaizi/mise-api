@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Attribute extends Model
+class ProductAttribute extends Model
 {
     use HasFactory,
         SoftDeletes;
@@ -77,8 +77,8 @@ class Attribute extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function valuess(): HasMany
+    public function values(): HasMany
     {
-        return $this->hasMany(AttributeValue::class);
+        return $this->hasMany(ProductAttributeValue::class);
     }
 }
