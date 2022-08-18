@@ -16,7 +16,7 @@ class CreateProductAttributeValuesTable extends Migration
         Schema::create('product_attribute_values', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('attribute_id')->unsigned();
-            $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('cascade');
+            $table->foreign('attribute_id')->references('id')->on('product_attributes')->onDelete('cascade');
             $table->string('name');
             $table->timestamps();
             $table->softDeletes();
