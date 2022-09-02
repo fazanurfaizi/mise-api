@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use DB;
 use Exception;
 use Carbon\Carbon;
 use App\Models\User\User;
@@ -11,6 +10,7 @@ use App\Events\EmailWasVerifiedEvent;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class EmailVerificationController extends Controller
 {

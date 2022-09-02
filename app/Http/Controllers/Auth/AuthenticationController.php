@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use JWTAuth;
 use App\Exceptions\LockedException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
@@ -11,6 +10,7 @@ use App\Models\Auth\UserVerification;
 use App\Notifications\VerifyEmailNotification;
 use App\Services\Auth\TokenManager;
 use App\Services\Auth\AuthenticateUser;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 
-class LoginController extends Controller
+class AuthenticationController extends Controller
 {
     public function login(LoginRequest $request)
     {

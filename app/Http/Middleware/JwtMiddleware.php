@@ -3,8 +3,8 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use JWTAuth;
 use Exception;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use PHPOpenSourceSaver\JWTAuth\Http\Middleware\BaseMiddleware;
 
 class JwtMiddleware extends BaseMiddleware

@@ -60,7 +60,7 @@ class ResetPasswordController extends Controller
     /**
      * Reset the given user's password.
      *
-     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
+     * @param  \App\Models\User\User  $user
      * @param  string  $password
      * @return void
      */
