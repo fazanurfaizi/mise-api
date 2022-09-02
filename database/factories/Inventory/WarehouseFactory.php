@@ -1,8 +1,8 @@
 <?php
 
-namespace Database\Factories\Product;
+namespace Database\Factories\Inventory;
 
-use App\Models\Product\Warehouse;
+use App\Models\Inventory\Warehouse;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class WarehouseFactory extends Factory

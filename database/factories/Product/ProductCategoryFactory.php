@@ -17,7 +17,7 @@ class ProductCategoryFactory extends Factory
      */
     public function definition()
     {
-        $title = $this->faker->words(rand(1, 4), true);
+        $title = $this->faker->unique()->words(rand(1, 4), true);
 
         return [
             'name' => $this->faker->unique()->words(rand(1, 4), true),

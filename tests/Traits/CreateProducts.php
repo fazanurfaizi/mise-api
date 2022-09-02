@@ -13,47 +13,43 @@ trait CreateProducts
      */
     protected function createTestProduct()
     {
-        $product = Product::factory(10)->create();
+        $product = Product::factory()->create();
 
         $sizeAttribute = ProductAttribute::factory()->make([
             'name' => 'size'
         ]);
         $sizeTerms = ['small', 'medium', 'large'];
-
         $colorAttribute = ProductAttribute::factory()->make([
             'name' => 'color'
         ]);
-        $colorTerms = ['black', 'white'];
+        $colorTerm = ['black', 'white'];
 
         // Set the terms and attributes
         $product->addAttribute($sizeAttribute->name);
-        $product->addAttributeTerm($sizeAttribute->name, $sizeTerms);
-
         $product->addAttribute($colorAttribute->name);
-        $product->addAttributeTerm($colorAttribute->name, $colorTerms);
+        $product->addAttributeTerm($sizeAttribute->name, $sizeTerms);
+        $product->addAttributeTerm($colorAttribute->name, $colorTerm);
 
         $variantSmallBlack = [
-            'code' => Str::random(16),
-            'price' => rand(100, 3000),
-            'cost' => rand(100, 3000),
-            'variant' => [
-                ['option' => $colorAttribute->name, 'color' => 'black'],
-                ['option' => $sizeAttribute->name, 'color' => 'small'],
-            ]
-        ];
-
-        $variantSmallWhite = [
-            'code' => Str::random(16),
-            'price' => rand(100, 3000),
-            'cost' => rand(100, 3000),
-            'variant' => [
-                ['option' => $colorAttribute->name, 'color' => 'white'],
-                ['option' => $sizeAttribute->name, 'color' => 'small'],
-            ]
-        ];
-
-        $product->addVariant($variantSmallBlack);
-        $product->addVariant($variantSmallWhite);
+			'sku' => 'WOOPROTSHIRT-SMBLK',
+			'price' => rand(100,300),
+			'cost' => rand(50, 99),
+			'variant' => [
+				['option' => 'color', 'value' => 'black'],
+				['option' => 'size', 'value' => 'small'],
+			]
+		];
+		$variantSmallWhite = [
+			'sku' => 'WOOPROTSHIRT-SMWHT',
+			'price' => rand(100,300),
+			'cost' => rand(50, 99),
+			'variant' => [
+				['option' => 'color', 'value' => 'white'],
+				['option' => 'size', 'value' => 'small'],
+			]
+		];
+		$product->addVariant($variantSmallBlack);
+		$product->addVariant($variantSmallWhite);
 
         return $product;
     }

@@ -2,7 +2,7 @@
 
 namespace App\Traits\Models;
 
-use App\Models\Product\InventoryStock;
+use App\Models\Inventory\InventoryStock;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 trait HasItemMovements

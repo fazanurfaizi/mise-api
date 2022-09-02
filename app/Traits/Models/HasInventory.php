@@ -3,7 +3,7 @@
 namespace App\Traits\Models;
 
 use App\Model\Product\ProductSku;
-use App\Model\Product\InventoryStock;
+use App\Model\Inventory\InventoryStock;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 

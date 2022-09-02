@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Product;
+namespace App\Models\Inventory;
 
 use App\Traits\Models\HasItemMovements;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class InventoryStockMovement extends Model
 {
-    use HasFactory;
+    use HasFactory, HasItemMovements;
 
     /**
      * Fields that can be mass assigned

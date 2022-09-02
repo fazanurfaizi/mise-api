@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models\Product;
+namespace App\Models\Inventory;
 
+use App\Models\Product\ProductSku;
 use App\Traits\Models\HasItemStocks;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
