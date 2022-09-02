@@ -26,7 +26,7 @@ class ProductResource extends JsonResource
                 'id' => $this->category->id,
                 'name' => $this->category->name,
             ],
-            'attributes' => AttributeResource::collectin($this->attributes)->toArray(app('request')),
+            'attributes' => AttributeResource::collection($this->attributes)->toArray(app('request')),
             'variations' => $this->when($this->hasAttributes() && $this->hasSku(),
                 VariantResource::collection($this->skus)->toArray(app('request'))
             )

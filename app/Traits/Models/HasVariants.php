@@ -69,7 +69,7 @@ trait HasVariants
 
             foreach ($variant['variant'] as $item) {
                 $attribute = $this->attributes()->where('name', $item['option'])->firstOrFail();
-                $value = $this->values()->where('value', $item['value'])->firstOrFail();
+                $value = $attribute->values()->where('value', $item['value'])->firstOrFail();
 
                 $this->variants()->create([
                     'product_sku_id' => $sku->id,

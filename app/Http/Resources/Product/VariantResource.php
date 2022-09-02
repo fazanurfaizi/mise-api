@@ -26,7 +26,7 @@ class VariantResource extends JsonResource
 				'id' => $this->product->category_id,
 				'name' => $this->product->category->name
 			],
-			'attributes' => collect($this->variant)->map(function ($item) {
+			'attributes' => collect($this->variants)->map(function ($item) {
 				return [
 					'name' => $item->attribute->name,
 					'option' => $item->option->value

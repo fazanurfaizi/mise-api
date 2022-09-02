@@ -2,11 +2,12 @@
 
 namespace App\Traits\Models;
 
-use DB;
 use App\Exceptions\NotEnoughStockException;
 use App\Exceptions\InvalidQuantityException;
 use App\Exceptions\InvalidMovementException;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 trait HasItemStocks
 {

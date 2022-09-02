@@ -11,7 +11,7 @@ class ProductVariantAdapter extends BaseAdapter
      *
      * @param mixed $model
      */
-    public function __construct($mode) {
+    public function __construct($model) {
         parent::__construct(new VariantResource($model));
     }
 
