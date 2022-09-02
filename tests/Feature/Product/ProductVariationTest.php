@@ -114,6 +114,9 @@ class ProductVariationTest extends TestCase
         $this->assertArrayHasKey('sku', $variantResource->transform(), 'It should have an sku');
     }
 
+    /**
+     * @test
+     */
     public function itShouldListTheVariations()
     {
         $product = Product::factory()->create();
@@ -159,6 +162,9 @@ class ProductVariationTest extends TestCase
 		$this->assertArrayHasKey('parent_product_id', $variantResource->transform(), 'It should have a parent_product_id');
     }
 
+    /**
+     * @test
+     */
     public function itShouldListCollectionOfVariations()
     {
         $product = Product::factory()->create();
@@ -199,7 +205,7 @@ class ProductVariationTest extends TestCase
 		$product->addVariant($variantSmallBlack);
 		$product->addVariant($variantSmallWhite);
 
-        $variantResource = new ProductVariantAdapter($product->findBySku('WOOPROTSHIRT-SMWHT'));
+        $variantResource = ProductVariantAdapter::collection($product->getVariations());
         $this->assertArrayHasKey('parent_product_id', head($variantResource), 'It should have a parent_product_id');
     }
 }
