@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateProductCategoriesTable extends Migration
@@ -16,7 +17,7 @@ class CreateProductCategoriesTable extends Migration
         Schema::create('product_categories', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('parent_id')->nullable()->unsigned();
-            $table->foreign('parent_id')->references('id')->on('product_categories')->onDelete('cascade');
+            $table->foreign('parent_id')->references('id')->on('product_categories')->onDelete('SET NULL');
             $table->string('name', 255);
             $table->string('slug', 255)->unique();
             $table->text('description')->nullable();
@@ -34,6 +35,8 @@ class CreateProductCategoriesTable extends Migration
      */
     public function down()
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
         Schema::dropIfExists('product_categories');
+        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
     }
 }

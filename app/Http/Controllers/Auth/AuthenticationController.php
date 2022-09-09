@@ -34,7 +34,7 @@ class AuthenticationController extends Controller
         $credentials = $request->only($username, 'password');
 
         DB::beginTransaction();
-        if($token = Auth::attempt($credentials)) {
+        if(Auth::attempt($credentials)) {
             $user = Auth::user();
 
             try {

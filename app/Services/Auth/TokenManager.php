@@ -5,10 +5,7 @@ namespace App\Services\Auth;
 use stdClass;
 use Carbon\Carbon;
 use App\Models\User\User;
-use App\Models\Auth\PersonalAccessToken;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
@@ -32,13 +29,6 @@ class TokenManager
 
         $this->token = JWTAuth::customClaims(['exp' => $expired])
             ->fromUser($this->user);
-
-        PersonalAccessToken::create([
-            'user_id' => $this->user->id,
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->header('User-Agent'),
-            'token' => Crypt::encrypt($this->token),
-        ]);
 
         return $this;
     }
