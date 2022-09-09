@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use DB;
 use Exception;
 use App\Models\User\User;
 use App\Models\Access\Role;
@@ -10,6 +9,7 @@ use App\Http\Resources\User\UserCollection;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class UserController extends Controller

@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use DB;
 use Exception;
-use App\Models\Product\Variant;
+use App\Models\Product\ProductVariant;
 use App\Http\Controllers\Controller;
+use App\Models\Product\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class VariantController extends Controller
@@ -69,7 +70,7 @@ class VariantController extends Controller
 
         try {
 
-            $variant = Variant::create([
+            $variant = ProductVariant::create([
                 'parent_id' => $request->get('parent_id'),
                 'name' => $request->get('name'),
             ]);
@@ -96,7 +97,7 @@ class VariantController extends Controller
      */
     public function show($id)
     {
-        $variant = Variant::with('children')->where('id', $id)->first();
+        $variant = ProductVariant::with('children')->where('id', $id)->first();
 
         return response()->json([
             'data' => $variant
@@ -115,7 +116,7 @@ class VariantController extends Controller
         DB::beginTransaction();
 
         try {
-            $variant = Variant::with('children')->where('id', $id)->first();
+            $variant = ProductVariant::with('children')->where('id', $id)->first();
 
             $variant->update([
                 'parent_id' => $request->get('parent_id'),
@@ -147,7 +148,7 @@ class VariantController extends Controller
         DB::beginTransaction();
 
         try {
-            $variant = Variant::with('children')->where('id', $id)->first();
+            $variant = ProductVariant::with('children')->where('id', $id)->first();
             $variant->delete();
 
             DB::commit();
@@ -175,7 +176,7 @@ class VariantController extends Controller
         DB::beginTransaction();
 
         try {
-            $variant = Variant::withTrashed()->findOrFail($id);
+            $variant = ProductVariant::withTrashed()->findOrFail($id);
             $variant->forceDelete();
 
             DB::commit();
@@ -183,7 +184,7 @@ class VariantController extends Controller
             return response()->json([
                 'message' => __('Deleted successfully')
             ], Response::HTTP_OK);
-        } catch (Excption $e) {
+        } catch (Exception $e) {
             DB::rollback();
 
             return response()->json([
@@ -206,7 +207,7 @@ class VariantController extends Controller
             $ids = explode(',', $request->ids);
 
             foreach ($ids as $id) {
-                $variant = Variant::findOrFail($id);
+                $variant = ProductVariant::findOrFail($id);
                 $variant->delete();
             }
 
@@ -215,7 +216,7 @@ class VariantController extends Controller
             return response()->json([
                 'message' => __('Deleted successfully')
             ], Response::HTTP_OK);
-        } catch (Excption $e) {
+        } catch (Exception $e) {
             DB::rollback();
 
             return response()->json([
@@ -238,7 +239,7 @@ class VariantController extends Controller
             $ids = explode(',', $request->ids);
 
             foreach ($ids as $id) {
-                $variant = Variant::findOrFail($id);
+                $variant = ProductVariant::findOrFail($id);
                 $variant->forceDelete();
             }
 
@@ -247,7 +248,7 @@ class VariantController extends Controller
             return response()->json([
                 'message' => __('Deleted successfully')
             ], Response::HTTP_OK);
-        } catch (Excption $e) {
+        } catch (Exception $e) {
             DB::rollback();
 
             return response()->json([
@@ -267,7 +268,7 @@ class VariantController extends Controller
         DB::beginTransaction();
 
         try {
-            $variant = Variant::withTrashed()->findOrFail($id);
+            $variant = ProductVariant::withTrashed()->findOrFail($id);
             $variant->restore();
 
             DB::commit();
@@ -275,7 +276,7 @@ class VariantController extends Controller
             return response()->json([
                 'message' => __('Restored successfully')
             ], Response::HTTP_OK);
-        } catch (Excption $e) {
+        } catch (Exception $e) {
             DB::rollback();
 
             return response()->json([
@@ -298,7 +299,7 @@ class VariantController extends Controller
             $ids = explode(',', $request->ids);
 
             foreach ($ids as $id) {
-                $variant = Variant::onlyTrashed()->findOrFail($id);
+                $variant = ProductVariant::onlyTrashed()->findOrFail($id);
                 $variant->restore();
             }
 
@@ -307,7 +308,7 @@ class VariantController extends Controller
             return response()->json([
                 'message' => __('Restored successfully')
             ], Response::HTTP_OK);
-        } catch (Excption $e) {
+        } catch (Exception $e) {
             DB::rollback();
 
             return response()->json([

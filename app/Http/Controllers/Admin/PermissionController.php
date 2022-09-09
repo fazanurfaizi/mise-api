@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use DB;
+use Exception;
 use App\Http\Controllers\Controller;
 use App\Models\Access\Role;
 use App\Models\Access\Permission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class PermissionController extends Controller

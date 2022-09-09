@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
-use DB;
-use Exception;
 use App\Models\Product\ProductCategory;
 use App\Http\Requests\Product\StoreProductCategoryRequest;
 use App\Http\Requests\Product\UpdateProductCategoryRequest;
 use App\Http\Controllers\Controller;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductCategoryController extends Controller
@@ -163,7 +163,7 @@ class ProductCategoryController extends Controller
             return response()->json([
                 'message' => __('Deleted successfully')
             ], Response::HTTP_OK);
-        } catch (Excption $e) {
+        } catch (Exception $e) {
             DB::rollback();
 
             return response()->json([
@@ -191,7 +191,7 @@ class ProductCategoryController extends Controller
             return response()->json([
                 'message' => __('Deleted successfully')
             ], Response::HTTP_OK);
-        } catch (Excption $e) {
+        } catch (Exception $e) {
             DB::rollback();
 
             return response()->json([
@@ -223,7 +223,7 @@ class ProductCategoryController extends Controller
             return response()->json([
                 'message' => __('Deleted successfully')
             ], Response::HTTP_OK);
-        } catch (Excption $e) {
+        } catch (Exception $e) {
             DB::rollback();
 
             return response()->json([
@@ -255,7 +255,7 @@ class ProductCategoryController extends Controller
             return response()->json([
                 'message' => __('Deleted successfully')
             ], Response::HTTP_OK);
-        } catch (Excption $e) {
+        } catch (Exception $e) {
             DB::rollback();
 
             return response()->json([
@@ -283,7 +283,7 @@ class ProductCategoryController extends Controller
             return response()->json([
                 'message' => __('Restored successfully')
             ], Response::HTTP_OK);
-        } catch (Excption $e) {
+        } catch (Exception $e) {
             DB::rollback();
 
             return response()->json([
@@ -315,7 +315,7 @@ class ProductCategoryController extends Controller
             return response()->json([
                 'message' => __('Restored successfully')
             ], Response::HTTP_OK);
-        } catch (Excption $e) {
+        } catch (Exception $e) {
             DB::rollback();
 
             return response()->json([
