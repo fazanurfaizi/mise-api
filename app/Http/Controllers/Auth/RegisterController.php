@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use Exception;
 use App\Models\User\User;
 use App\Models\Access\Role;
-use App\Models\Access\UserRole;
 use App\Models\Auth\UserVerification;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
@@ -17,9 +16,14 @@ use App\Http\Requests\Auth\RegisterRequest;
 
 class RegisterController extends Controller
 {
-
-    public function register(RegisterRequest $request) {
-
+    /**
+     * Handle the incoming request.
+     *
+     * @param  \App\Http\Requests\Auth\RegisterRequest  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function __invoke(RegisterRequest $request)
+    {
         try {
             DB::beginTransaction();
 
@@ -72,5 +76,4 @@ class RegisterController extends Controller
 
         return $role;
     }
-
 }

@@ -2,10 +2,13 @@
 
 namespace App\Notifications;
 
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\URL;
 
 class VerifyEmailNotification extends Notification implements ShouldQueue
 {
@@ -49,7 +52,7 @@ class VerifyEmailNotification extends Notification implements ShouldQueue
             ->subject(__(':app_name - Confirm your registration', ['app_name' => config('app.name')]))
             ->greeting(__('Welcome to :app_name', ['app_name' => config('app.name')]))
             ->line(__('Click the link below to complete verification:'))
-            ->action(__('Verify Email'), route('api.auth.verify', $this->token))
+            ->action(__('Verify Email'), $this->verificationUrl())
             ->line('<b>' . __('5 Security Tips') . '</b>')
             ->line('<small>' . __('DO NOT give your password to anyone!') . '<br>' .
                 __(
@@ -62,5 +65,15 @@ class VerifyEmailNotification extends Notification implements ShouldQueue
                 ) . '<br>' .
                 __('Enable Two Factor Authentication!') . '<br>' .
                 __('Make sure you are visiting :app_url', ['app_url' => config('app.url')]) . '</small>');
+    }
+
+    protected function verificationUrl() {
+        return URL::temporarySignedRoute(
+            'api.auth.verify',
+            Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
+            [
+                'token' => $this->token,
+            ]
+        );
     }
 }

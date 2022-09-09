@@ -10,14 +10,27 @@ use App\Events\EmailWasVerifiedEvent;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class EmailVerificationController extends Controller
 {
-    public function verify($token): JsonResponse
+    /**
+     * Handle the incoming request.
+     *
+     * @param  \App\Http\Requests\Auth\RegisterRequest  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function __invoke(Request $request, $token): JsonResponse
     {
         try {
             DB::beginTransaction();
+
+            if (!$request->hasValidSignature()) {
+                return response()->json([
+                    'message' => __('Your verification link is expired!')
+                ], Response::HTTP_UNAUTHORIZED);
+            }
 
             $verification = UserVerification::where('token', $token)->first();
 

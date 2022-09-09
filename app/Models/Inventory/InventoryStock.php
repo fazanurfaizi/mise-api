@@ -68,11 +68,11 @@ class InventoryStock extends Model
     }
 
     /**
-     * Get the warehose that owns the InventoryStock
+     * Get the warehouse that owns the InventoryStock
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function warehose(): BelongsTo
+    public function warehouse(): BelongsTo
     {
         return $this->belongsTo(Warehouse::class);
     }

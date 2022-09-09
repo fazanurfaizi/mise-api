@@ -30,7 +30,7 @@ trait HasInventory
     {
         return collect($this->warehouses)
             ->map(function($item) {
-                return $item->warehose;
+                return $item->warehouse;
             })
             ->unique('id')
             ->values();

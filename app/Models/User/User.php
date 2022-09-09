@@ -4,9 +4,8 @@ namespace App\Models\User;
 
 use App\Models\Access\Role;
 use App\Models\Auth\UserVerification;
-use App\Contracts\Auth\TwoFactorAuthenticatable;
+use App\Notifications\VerifyEmailNotification;
 use App\Traits\TwoFactor\TwoFactorAuthenticator;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -16,7 +15,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements JWTSubject, TwoFactorAuthenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use SoftDeletes,
         HasFactory,
@@ -108,6 +107,28 @@ class User extends Authenticatable implements JWTSubject, TwoFactorAuthenticatab
         'email',
         'avatar',
     ];
+
+    /**
+     * Determine if the user has verified their email address.
+     *
+     * @return bool
+     */
+    public function hasVerifiedEmail()
+    {
+        return ! is_null($this->email_verified_at);
+    }
+
+    /**
+     * Mark the given user's email as verified.
+     *
+     * @return bool
+     */
+    public function markEmailAsVerified()
+    {
+        return $this->forceFill([
+            'email_verified_at' => $this->freshTimestamp(),
+        ])->save();
+    }
 
     protected static $logName = 'User';
 

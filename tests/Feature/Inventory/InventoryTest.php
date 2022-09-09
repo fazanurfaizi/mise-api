@@ -47,7 +47,7 @@ class InventoryTest extends TestCase
 
         $warehouse->load('items');
 
-        $this->assertArrayHasKey('items', $warehouse, 'Warehose should have a stocks');
+        $this->assertArrayHasKey('items', $warehouse, 'Warehouse should have a stocks');
     }
 
     /**
