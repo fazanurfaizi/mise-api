@@ -23,18 +23,18 @@ class AuthenticateUser
 
     private static function getRoles($user_id)
     {
-        return UserRole::join('roles', 'roles.id', '=', 'user_roles.role_id')
-            ->where('user_id', $user_id)
+        return UserRole::join('roles', 'roles.id', '=', 'user_has_roles.role_id')
+            ->where('model_id', $user_id)
             ->select('roles.*')
             ->get();
     }
 
     private static function getPermissions($user_id)
     {
-        return RolePermission::join('user_roles', 'role_permissions.role_id', '=', 'user_roles.role_id')
-            ->join('permissions', 'permissions.id', '=', 'role_permissions.permission_id')
-            ->where('user_roles.user_id', $user_id)
-            ->select('permissions.id', 'permissions.key')
+        return RolePermission::join('user_has_roles', 'role_has_permissions.role_id', '=', 'user_has_roles.role_id')
+            ->join('permissions', 'permissions.id', '=', 'role_has_permissions.permission_id')
+            ->where('user_has_roles.model_id', $user_id)
+            ->select('permissions.id', 'permissions.name')
             ->get();
     }
 
@@ -47,7 +47,7 @@ class AuthenticateUser
         $user = self::getUser();
 
         $user_permissions = isset($user) ? $user->permissions : [];
-        $user_permissions = collect($user_permissions)->pluck('key')->toArray();
+        $user_permissions = collect($user_permissions)->pluck('name')->toArray();
 
         $intersect = array_intersect($permissions, $user_permissions);
 
@@ -61,8 +61,8 @@ class AuthenticateUser
     public static function ignore($permissions_string = '')
     {
         $permissions = explode(',', $permissions_string);
-        $public_permissions = Permission::where('is_public', 1)->orWhere('always_allow', 1)->get();
-        $public_permissions = collect($public_permissions)->pluck('key')->toArray();
+        $public_permissions = Permission::get();
+        $public_permissions = collect($public_permissions)->pluck('name')->toArray();
 
         $intersect = array_intersect($permissions, $public_permissions);
 

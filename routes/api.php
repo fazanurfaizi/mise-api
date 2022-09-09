@@ -30,8 +30,8 @@ Route::group(['as' => 'auth.', 'prefix' => 'auth'], function() {
 
     Route::group(['middleware' => 'jwt.verify'], function() {
         Route::get('/me', [AuthenticationController::class, 'me'])->name('me');
-        Route::post('/refresh', [AuthenticationController::class, 'refresh'])->name('refresh');
-        Route::post('/logout', [AuthenticationController::class, 'logout'])->name('logout');
+        Route::get('/refresh', [AuthenticationController::class, 'refresh'])->name('refresh');
+        Route::delete('/logout', [AuthenticationController::class, 'logout'])->name('logout');
     });
 });
 

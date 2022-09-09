@@ -34,22 +34,19 @@ class AuthenticationController extends Controller
         $credentials = $request->only($username, 'password');
 
         DB::beginTransaction();
+
         if(Auth::attempt($credentials)) {
-            $user = Auth::user();
-
             try {
-
+                $user = Auth::user();
                 $this->checkIfUserHasVerifiedEmail($user, $request);
 
+                DB::commit();
+                return TokenManager::fromUser($user)->createToken($request, $remember)->response();
             } catch (LockedException $e) {
                 return response()->json([
                     'message' => $e->getMessage()
                 ], Response::HTTP_LOCKED);
             }
-
-            DB::commit();
-
-            return TokenManager::fromUser($user)->createToken($request, $remember)->response();
         } else {
             DB::rollback();
 

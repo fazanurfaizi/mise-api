@@ -34,16 +34,6 @@ class EmailVerificationController extends Controller
 
             $verification = UserVerification::where('token', $token)->first();
 
-            if(Carbon::parse($verification->created_at)->addSeconds(60 * 60)->isPast()) {
-                $verification->delete();
-
-                DB::commit();
-
-                return response()->json([
-                    'message' => __('Token was expired')
-                ], Response::HTTP_BAD_REQUEST);
-            }
-
             $user = User::where('email', $verification->email)->first();
 
             if(!$user->hasVerifiedEmail() && $user->markEmailAsVerified()) {
