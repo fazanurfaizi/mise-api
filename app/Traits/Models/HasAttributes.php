@@ -165,10 +165,7 @@ trait HasAttributes
      */
     public function loadAttributes()
     {
-        DB::enableQueryLog();
-        $attributes = $this->attributes()->get()->load('values');
-        Log::info(DB::getQueryLog());
-        return $attributes;
+        return $this->attributes()->get()->load('values');
     }
 
     /**
