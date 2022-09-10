@@ -5,6 +5,7 @@ namespace App\Models\Product;
 use App\Traits\Models\SelfReference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -26,10 +27,17 @@ class ProductCategory extends Model
     /**
      * Get all of the products for the ProductCategory
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function products(): HasMany
+    public function products(): BelongsToMany
     {
-        return $this->hasMany(Product::class, 'category_id', 'id');
+        return $this->belongsToMany(
+            Product::class,
+            'product_has_category',
+            'category_id',
+            'product_id'
+        )->using(ProductHasCategory::class)
+        ->withTimestamps()
+        ->whereNull('product_has_category.deleted_at');
     }
 }

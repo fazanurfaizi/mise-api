@@ -9,7 +9,7 @@ use App\Traits\Models\HasInventory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Product extends Model
 {
@@ -49,13 +49,20 @@ class Product extends Model
 	protected $sluggable = 'name';
 
     /**
-     * Get the category that owns the Product
+     * Get the categories that owns the Product
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function category(): BelongsTo
+    public function categories(): BelongsToMany
     {
-        return $this->belongsTo(ProductCategory::class, 'category_id', 'id');
+        return $this->belongsToMany(
+            ProductCategory::class,
+            'product_has_category',
+            'product_id',
+            'category_id'
+        )->using(ProductHasCategory::class)
+        ->withTimestamps()
+        ->whereNull('product_has_category.deleted_at');
     }
 
 }

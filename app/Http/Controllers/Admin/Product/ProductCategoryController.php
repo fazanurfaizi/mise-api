@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Exception;
 use App\Models\Product\ProductCategory;
 use App\Http\Requests\Product\StoreProductCategoryRequest;
 use App\Http\Requests\Product\UpdateProductCategoryRequest;
 use App\Http\Controllers\Controller;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
