@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers\Admin\Product;
 
-use Exception;
-use App\Models\Product\ProductCategory;
-use App\Http\Requests\Product\StoreProductCategoryRequest;
-use App\Http\Requests\Product\UpdateProductCategoryRequest;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Product\StoreProductAttributeRequest;
+use App\Http\Requests\Product\UpdateProductAttributeRequest;
+use App\Http\Resources\Product\AttributeResource;
+use App\Http\Resources\Product\ProductAttributeCollection;
+use App\Models\Product\ProductAttribute;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Spatie\QueryBuilder\QueryBuilder;
 
-class ProductCategoryController extends Controller
+class ProductAttributeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,19 +23,19 @@ class ProductCategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index(Request  $request)
+    public function index(Request $request)
     {
-        $productCategories = QueryBuilder::for(ProductCategory::class)
-            ->allowedFields(['id', 'parent_id', 'name', 'slug', 'description', 'sku', 'image'])
-            ->allowedFilters(['name', 'sku'])
+        DB::enableQueryLog();
+        $productAttributes = QueryBuilder::for(ProductAttribute::class)
+            ->allowedFields(['id', 'name'])
+            ->allowedFilters(['name'])
             ->defaultSort('-created_at')
-            ->allowedSorts('id', 'parent_id', 'name', 'sku')
-            ->allowedIncludes(['children'])
-            ->where('parent_id', null)
+            ->allowedSorts('id', 'name')
+            ->allowedIncludes(['values'])
             ->jsonPaginate();
 
         return response()->json([
-            'data' => $productCategories
+            'data' => new ProductAttributeCollection($productAttributes)
         ], Response::HTTP_OK);
     }
 
@@ -44,40 +47,38 @@ class ProductCategoryController extends Controller
      */
     public function browseBin(Request $request)
     {
-        $productCategories = QueryBuilder::for(ProductCategory::class)
-            ->allowedFields(['id', 'parent_id', 'name', 'slug', 'description', 'sku', 'image'])
-            ->allowedFilters(['name', 'sku'])
+        $productAttributes = QueryBuilder::for(ProductAttribute::class)
+            ->allowedFields(['id', 'name'])
+            ->allowedFilters(['name'])
             ->defaultSort('-created_at')
-            ->allowedSorts('id', 'parent_id', 'name', 'sku')
-            ->allowedIncludes(['children'])
+            ->allowedSorts('id', 'name')
+            ->allowedIncludes(['values'])
             ->onlyTrashed()
-            ->where('parent_id', null)
             ->jsonPaginate();
 
         return response()->json([
-            'data' => $productCategories
+            'data' => new ProductAttributeCollection($productAttributes)
         ], Response::HTTP_OK);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  StoreProductCategoryRequest  $request
+     * @param  \App\Http\Requests\Product\StoreProductAttributeRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreProductCategoryRequest $request)
+    public function store(StoreProductAttributeRequest $request)
     {
-        DB::beginTransaction();
-
         try {
+            DB::beginTransaction();
 
-            $productCategory = ProductCategory::create([
-                'parent_id' => $request->get('parent_id'),
-                'name' => $request->get('name'),
-                'slug' => $request->get('slug'),
-                'description' => $request->get('description'),
-                'sku' => $request->get('sku'),
+            $productAttribute = ProductAttribute::create([
+                'name' => $request->post('attribute')
             ]);
+
+            if ($request->has('values')) {
+                $productAttribute->addValue($request->post('values'));
+            }
 
             DB::commit();
 
@@ -96,39 +97,38 @@ class ProductCategoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  $id
+     * @param  \App\Models\Product\ProductAttribute  $productAttribute
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(ProductAttribute $productAttribute)
     {
-        $productCategory = ProductCategory::with('children')->where('id', $id)->first();
+        $productAttribute->load('values');
 
         return response()->json([
-            'data' => $productCategory
+            'data' => new AttributeResource($productAttribute)
         ], Response::HTTP_OK);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  UpdateProductCategoryRequest  $request
-     * @param  $id
+     * @param  \App\Http\Requests\Product\UpdateProductAttributeRequest  $request
+     * @param  \App\Models\Product\ProductAttribute  $productAttribute
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateProductCategoryRequest $request, $id)
+    public function update(UpdateProductAttributeRequest $request, ProductAttribute $productAttribute)
     {
-        DB::beginTransaction();
-
         try {
-            $productCategory = ProductCategory::findOrFail($id);
+            DB::beginTransaction();
 
-            $productCategory->update([
-                'parent_id' => $request->get('parent_id'),
-                'name' => $request->get('name'),
-                'slug' => $request->get('slug'),
-                'description' => $request->get('description'),
-                'sku' => $request->get('sku'),
+            $productAttribute->update([
+                'name' => $request->post('attribute')
             ]);
+
+            if ($request->has('values')) {
+                $productAttribute->values()->delete();
+                $productAttribute->addValue($request->post('values'));
+            }
 
             DB::commit();
 
@@ -147,15 +147,16 @@ class ProductCategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  $id
+     * @param  \App\Models\Product\ProductAttribute  $productAttribute
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(ProductAttribute $productAttribute)
     {
         DB::beginTransaction();
 
         try {
-            ProductCategory::findOrFail($id)->delete();
+            $productAttribute->values()->delete();
+            $productAttribute->delete();
 
             DB::commit();
 
@@ -174,7 +175,7 @@ class ProductCategoryController extends Controller
     /**
      * Force remove the specified resource from storage.
      *
-     * @param  $id
+     * @param  mixed $id
      * @return \Illuminate\Http\Response
      */
     public function forceDestroy($id)
@@ -182,7 +183,9 @@ class ProductCategoryController extends Controller
         DB::beginTransaction();
 
         try {
-            ProductCategory::withTrashed()->findOrFail($id)->forceDelete();
+            $productAttribute = ProductAttribute::withTrashed()->findOrFail($id);
+            $productAttribute->values()->forceDelete();
+            $productAttribute->forceDelete();
 
             DB::commit();
 
@@ -209,10 +212,9 @@ class ProductCategoryController extends Controller
         DB::beginTransaction();
 
         try {
-            ProductCategory::query()
-                ->withTrashed()
-                ->whereIn('id', $request->post('ids'))
-                ->delete();
+            $productAttributes = ProductAttribute::whereIn('id', $request->post('ids'));
+            $productAttributes->each(fn($attribute) => $attribute->values()->delete());
+            $productAttributes->delete();
 
             DB::commit();
 
@@ -239,10 +241,9 @@ class ProductCategoryController extends Controller
         DB::beginTransaction();
 
         try {
-            ProductCategory::query()
-                ->withTrashed()
-                ->whereIn('id', $request->post('ids'))
-                ->forceDelete();
+            $productAttributes = ProductAttribute::withTrashed()->whereIn('id', $request->post('ids'));
+            $productAttributes->each(fn($attribute) => $attribute->values()->withTrashed()->forceDelete());
+            $productAttributes->forceDelete();
 
             DB::commit();
 
@@ -261,7 +262,7 @@ class ProductCategoryController extends Controller
     /**
      * Restore the specified resource from storage.
      *
-     * @param  $id
+     * @param  mixed $id
      * @return \Illuminate\Http\Response
      */
     public function restore($id)
@@ -269,7 +270,9 @@ class ProductCategoryController extends Controller
         DB::beginTransaction();
 
         try {
-            ProductCategory::withTrashed()->findOrFail($id)->restore();
+            $productAttribute = ProductAttribute::withTrashed()->findOrFail($id);
+            $productAttribute->values()->restore();
+            $productAttribute->restore();
 
             DB::commit();
 
@@ -296,10 +299,9 @@ class ProductCategoryController extends Controller
         DB::beginTransaction();
 
         try {
-            ProductCategory::query()
-                ->withTrashed()
-                ->whereIn('id', $request->post('ids'))
-                ->restore();
+            $productAttributes = ProductAttribute::withTrashed()->whereIn('id', $request->post('ids'));
+            $productAttributes->each(fn($attribute) => $attribute->values()->withTrashed()->restore());
+            $productAttributes->restore();
 
             DB::commit();
 

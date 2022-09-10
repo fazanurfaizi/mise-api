@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\Product\ProductAttributeController;
 use App\Http\Controllers\Admin\Product\ProductCategoryController;
 use App\Http\Controllers\Admin\Product\ProductController;
 
@@ -51,4 +52,16 @@ Route::controller(ProductController::class)
         // Route::post('products-multipleForceDestroy', 'multipleForceDestroy')->name('multiple-force-destroy');
         // Route::put('products-restore/{id}', 'restore')->name('restore');
         // Route::put('products-multipleRestore', 'multipleRestore')->name('multiple-restore');
+    });
+
+Route::apiResource('product-attributes', ProductAttributeController::class);
+Route::controller(ProductAttributeController::class)
+    ->as('product-attributes')
+    ->group(function() {
+        Route::get('product-attributes-bin', 'browseBin')->name('browse-bin');
+        Route::delete('product-attributes-forceDestroy/{id}', 'forceDestroy')->name('force-destroy');
+        Route::post('product-attributes-multipleDestroy', 'multipleDestroy')->name('multiple-destroy');
+        // Route::post('product-attributes-multipleForceDestroy', 'multipleForceDestroy')->name('multiple-force-destroy');
+        Route::get('product-attributes-restore/{id}', 'restore')->name('restore');
+        Route::post('product-attributes-multipleRestore', 'multipleRestore')->name('multiple-restore');
     });

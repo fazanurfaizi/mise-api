@@ -27,38 +27,39 @@ class AuthenticationController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $remember = $request->get('remember', false);
-        $username = filter_var($request->get('username'), FILTER_VALIDATE_EMAIL)
-            ? 'email'
-            : 'username';
+        return response()->json($request->all());
+        // $remember = $request->get('remember', false);
+        // $username = filter_var($request->get('username'), FILTER_VALIDATE_EMAIL)
+        //     ? 'email'
+        //     : 'username';
 
-        $request->merge([
-            $username => $request->get('username')
-        ]);
+        // $request->merge([
+        //     $username => $request->get('username')
+        // ]);
 
-        $credentials = $request->only($username, 'password');
+        // $credentials = $request->only($username, 'password');
 
-        DB::beginTransaction();
+        // DB::beginTransaction();
 
-        if(Auth::attempt($credentials)) {
-            try {
-                $user = Auth::user();
-                $this->checkIfUserHasVerifiedEmail($user, $request);
+        // if(Auth::attempt($credentials)) {
+        //     try {
+        //         $user = Auth::user();
+        //         $this->checkIfUserHasVerifiedEmail($user, $request);
 
-                DB::commit();
-                return TokenManager::fromUser($user)->createToken($request, $remember)->response();
-            } catch (LockedException $e) {
-                return response()->json([
-                    'message' => $e->getMessage()
-                ], Response::HTTP_LOCKED);
-            }
-        } else {
-            DB::rollback();
+        //         DB::commit();
+        //         return TokenManager::fromUser($user)->createToken($request, $remember)->response();
+        //     } catch (LockedException $e) {
+        //         return response()->json([
+        //             'message' => $e->getMessage()
+        //         ], Response::HTTP_LOCKED);
+        //     }
+        // } else {
+        //     DB::rollback();
 
-            return response()->json([
-                'message' => 'Incorrect email or password'
-            ], Response::HTTP_UNAUTHORIZED);
-        }
+        //     return response()->json([
+        //         'message' => 'Incorrect email or password'
+        //     ], Response::HTTP_UNAUTHORIZED);
+        // }
     }
 
     /**

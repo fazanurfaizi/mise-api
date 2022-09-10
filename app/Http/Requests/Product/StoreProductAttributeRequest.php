@@ -1,10 +1,10 @@
 <?php
 
-namespace {{ namespace }};
+namespace App\Http\Requests\Product;
 
 use App\Http\Requests\FormRequest;
 
-class {{ class }} extends FormRequest
+class StoreProductAttributeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class {{ class }} extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,8 @@ class {{ class }} extends FormRequest
     public function rules()
     {
         return [
-            //
+            'attribute' => 'string|required|unique:product_attributes,name',
+            'values' => 'nullable|array'
         ];
     }
 }
