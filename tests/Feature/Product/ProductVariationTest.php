@@ -11,55 +11,17 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
-
-use function PHPUnit\Framework\assertArrayHasKey;
-use function PHPUnit\Framework\assertEquals;
+use Tests\Traits\CreateProducts;
 
 class ProductVariationTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, CreateProducts;
     /**
      * @test
      */
     public function itShouldHaveProductVariant()
     {
-        $product = Product::factory()->create();
-
-        $sizeAttribute = ProductAttribute::factory()->make([
-            'name' => 'size'
-        ]);
-        $sizeTerms = ['small', 'medium', 'large'];
-        $colorAttribute = ProductAttribute::factory()->make([
-            'name' => 'color'
-        ]);
-        $colorTerm = ['black', 'white'];
-
-        // Set the terms and attributes
-        $product->addAttribute($sizeAttribute->name);
-        $product->addAttribute($colorAttribute->name);
-        $product->addAttributeTerm($sizeAttribute->name, $sizeTerms);
-        $product->addAttributeTerm($colorAttribute->name, $colorTerm);
-
-        $variantSmallBlack = [
-			'sku' => 'WOOPROTSHIRT-SMBLK',
-			'price' => rand(100,300),
-			'cost' => rand(50, 99),
-			'variant' => [
-				['option' => 'color', 'value' => 'black'],
-				['option' => 'size', 'value' => 'small'],
-			]
-		];
-		$variantSmallWhite = [
-			'sku' => 'WOOPROTSHIRT-SMWHT',
-			'price' => rand(100,300),
-			'cost' => rand(50, 99),
-			'variant' => [
-				['option' => 'color', 'value' => 'white'],
-				['option' => 'size', 'value' => 'small'],
-			]
-		];
-		$product->addVariant($variantSmallBlack);
-		$product->addVariant($variantSmallWhite);
+        $product = $this->createTestProduct();
 
 		$productResource = new ProductAdapter($product);
 
@@ -71,43 +33,7 @@ class ProductVariationTest extends TestCase
      */
     public function itShouldFindProductBySku()
     {
-        $product = Product::factory()->create();
-
-        $sizeAttribute = ProductAttribute::factory()->make([
-            'name' => 'size'
-        ]);
-        $sizeTerms = ['small', 'medium', 'large'];
-        $colorAttribute = ProductAttribute::factory()->make([
-            'name' => 'color'
-        ]);
-        $colorTerm = ['black', 'white'];
-
-        // Set the terms and attributes
-        $product->addAttribute($sizeAttribute->name);
-        $product->addAttribute($colorAttribute->name);
-        $product->addAttributeTerm($sizeAttribute->name, $sizeTerms);
-        $product->addAttributeTerm($colorAttribute->name, $colorTerm);
-
-        $variantSmallBlack = [
-			'sku' => 'WOOPROTSHIRT-SMBLK',
-			'price' => rand(100,300),
-			'cost' => rand(50, 99),
-			'variant' => [
-				['option' => 'color', 'value' => 'black'],
-				['option' => 'size', 'value' => 'small'],
-			]
-		];
-		$variantSmallWhite = [
-			'sku' => 'WOOPROTSHIRT-SMWHT',
-			'price' => rand(100,300),
-			'cost' => rand(50, 99),
-			'variant' => [
-				['option' => 'color', 'value' => 'white'],
-				['option' => 'size', 'value' => 'small'],
-			]
-		];
-		$product->addVariant($variantSmallBlack);
-		$product->addVariant($variantSmallWhite);
+        $product = $this->createTestProduct();
 
         $variantResource = new ProductVariantAdapter($product->findBySku('WOOPROTSHIRT-SMWHT'));
 
@@ -119,43 +45,7 @@ class ProductVariationTest extends TestCase
      */
     public function itShouldListTheVariations()
     {
-        $product = Product::factory()->create();
-
-        $sizeAttribute = ProductAttribute::factory()->make([
-            'name' => 'size'
-        ]);
-        $sizeTerms = ['small', 'medium', 'large'];
-        $colorAttribute = ProductAttribute::factory()->make([
-            'name' => 'color'
-        ]);
-        $colorTerm = ['black', 'white'];
-
-        // Set the terms and attributes
-        $product->addAttribute($sizeAttribute->name);
-        $product->addAttribute($colorAttribute->name);
-        $product->addAttributeTerm($sizeAttribute->name, $sizeTerms);
-        $product->addAttributeTerm($colorAttribute->name, $colorTerm);
-
-        $variantSmallBlack = [
-			'sku' => 'WOOPROTSHIRT-SMBLK',
-			'price' => rand(100,300),
-			'cost' => rand(50, 99),
-			'variant' => [
-				['option' => 'color', 'value' => 'black'],
-				['option' => 'size', 'value' => 'small'],
-			]
-		];
-		$variantSmallWhite = [
-			'sku' => 'WOOPROTSHIRT-SMWHT',
-			'price' => rand(100,300),
-			'cost' => rand(50, 99),
-			'variant' => [
-				['option' => 'color', 'value' => 'white'],
-				['option' => 'size', 'value' => 'small'],
-			]
-		];
-		$product->addVariant($variantSmallBlack);
-		$product->addVariant($variantSmallWhite);
+        $product = $this->createTestProduct();
 
         $variantResource = new ProductVariantAdapter($product->findBySku('WOOPROTSHIRT-SMWHT'));
         $this->assertArrayHasKey('sku', $variantResource->transform(), 'It should have an sku');
@@ -167,43 +57,7 @@ class ProductVariationTest extends TestCase
      */
     public function itShouldListCollectionOfVariations()
     {
-        $product = Product::factory()->create();
-
-        $sizeAttribute = ProductAttribute::factory()->make([
-            'name' => 'size'
-        ]);
-        $sizeTerms = ['small', 'medium', 'large'];
-        $colorAttribute = ProductAttribute::factory()->make([
-            'name' => 'color'
-        ]);
-        $colorTerm = ['black', 'white'];
-
-        // Set the terms and attributes
-        $product->addAttribute($sizeAttribute->name);
-        $product->addAttribute($colorAttribute->name);
-        $product->addAttributeTerm($sizeAttribute->name, $sizeTerms);
-        $product->addAttributeTerm($colorAttribute->name, $colorTerm);
-
-        $variantSmallBlack = [
-			'sku' => 'WOOPROTSHIRT-SMBLK',
-			'price' => rand(100,300),
-			'cost' => rand(50, 99),
-			'variant' => [
-				['option' => 'color', 'value' => 'black'],
-				['option' => 'size', 'value' => 'small'],
-			]
-		];
-		$variantSmallWhite = [
-			'sku' => 'WOOPROTSHIRT-SMWHT',
-			'price' => rand(100,300),
-			'cost' => rand(50, 99),
-			'variant' => [
-				['option' => 'color', 'value' => 'white'],
-				['option' => 'size', 'value' => 'small'],
-			]
-		];
-		$product->addVariant($variantSmallBlack);
-		$product->addVariant($variantSmallWhite);
+        $product = $this->createTestProduct();
 
         $variantResource = ProductVariantAdapter::collection($product->getVariations());
         $this->assertArrayHasKey('parent_product_id', head($variantResource), 'It should have a parent_product_id');

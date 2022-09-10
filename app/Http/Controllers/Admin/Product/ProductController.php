@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\Product;
 
-use DB;
 use Exception;
 use App\Models\Product\Product;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends Controller
@@ -18,14 +18,16 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $products = QueryBuilder::for(Product::class)
             ->allowedFields(['id', 'name', 'slug', 'description'])
             ->allowedFilters(['name', 'slug'])
             ->defaultSort('-created_at')
             ->allowedSorts('id', 'name')
-            ->with(['category', 'variants'])
+            ->whereHas('categories', function($query) use ($request) {
+                $query->where('product_categories.id', $request->get('category_id'));
+            })
             ->jsonPaginate();
 
         return response()->json([
@@ -47,7 +49,6 @@ class ProductController extends Controller
             ->defaultSort('-created_at')
             ->allowedSorts('id', 'name')
             ->onlyTrashed()
-            ->with(['category', 'variants'])
             ->jsonPaginate();
 
         return response()->json([
@@ -74,7 +75,11 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
+        $product->load(['categories', 'variants']);
+
+        return response()->json([
+            'data' => $product
+        ], Response::HTTP_OK);
     }
 
     /**

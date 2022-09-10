@@ -22,13 +22,13 @@ class ProductResource extends JsonResource
             'description' => $this->description,
             'price' => $this->hasSku() ? number_format($this->skus()->first()->price, 2, '.', '') : 0.00,
             'cost' => $this->hasSku() ? number_format($this->skus()->first()->price, 2, '.', '') : 0.00,
-            'category' => [
-                'id' => $this->category->id,
-                'name' => $this->category->name,
-            ],
-            'attributes' => AttributeResource::collection($this->attributes)->toArray(app('request')),
-            'variations' => $this->when($this->hasAttributes() && $this->hasSku(),
-                VariantResource::collection($this->skus)->toArray(app('request'))
+            'categories' => $this->whenLoaded('categories', CategoryResource::collection($this->categories)),
+            'attributes' => $this->whenLoaded('attributes', AttributeResource::collection($this->attributes)->toArray(app('request'))),
+            'variations' => $this->whenLoaded(
+                'variations',
+                $this->when($this->hasAttributes() && $this->hasSku(),
+                    VariantResource::collection($this->skus)->toArray(app('request'))
+                )
             )
         ];
     }

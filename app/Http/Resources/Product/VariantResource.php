@@ -22,10 +22,12 @@ class VariantResource extends JsonResource
 			'description' => $this->product->description,
 			'price' => number_format($this->price, 2, '.', ''),
 			'cost' => number_format($this->cost, 2, '.', ''),
-			'category' => [
-				'id' => $this->product->category_id,
-				'name' => $this->product->category->name
-			],
+			'categories' => collect($this->categories)->map(function($category) {
+                return [
+                    'id' => $category->id,
+                    'name' => $category->name
+                ];
+            }),
 			'attributes' => collect($this->variants)->map(function ($item) {
 				return [
 					'name' => $item->attribute->name,

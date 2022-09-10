@@ -34,10 +34,10 @@ class ProductAttributeTest extends TestCase
     public function itShouldAddAttributeAndValueToProduct()
     {
         $product = Product::factory()->create();
-        $attribute = ProductAttribute::factory()->create([
-            'product_id' => $product->id
+        $attribute = ProductAttribute::factory()->create();
+        $option = ProductAttributeValue::factory()->create([
+            'attribute_id' => $attribute->id
         ]);
-        $option = ProductAttributeValue::factory()->create();
 
         $product->addAttributeTerm($attribute->name, $option->value);
 
@@ -50,9 +50,8 @@ class ProductAttributeTest extends TestCase
     public function itShouldGetProductAttributeAndValues()
     {
         $product = Product::factory()->create();
-        $attribute = ProductAttribute::factory()->create([
-            'product_id' => $product->id
-        ]);
+        $attribute = ProductAttribute::factory()->create();
+        $product->addAttribute($attribute->name);
         $size = rand(2, 5);
 
         $options = ProductAttributeValue::factory($size)->create();
@@ -89,7 +88,7 @@ class ProductAttributeTest extends TestCase
         $size = rand(2, 4);
         $attributes = ProductAttribute::factory($size)->create();
 
-        $product->addAttributes($attributes->toArray());
+        $product->addAttributes($attributes);
 
         $this->assertEquals($size, sizeof($product->loadAttributes()->toArray()), 'Attributes should be equal to product attribute');
     }
@@ -111,7 +110,7 @@ class ProductAttributeTest extends TestCase
 		$size = rand(2,4);
 		$attributes = ProductAttribute::factory($size)->create();
 
-		$product->addAttributes($attributes->toArray());
+		$product->addAttributes($attributes);
 
 		$selected = sizeof($attributes) < 1 ? 0 : rand(0, sizeof($attributes) - 1);
 
@@ -124,9 +123,8 @@ class ProductAttributeTest extends TestCase
 	public function itShouldRemoveAttributeTermFromProduct()
 	{
 		$product = Product::factory()->create();
-		$attribute = ProductAttribute::factory()->create([
-			'product_id' => $product->id
-		]);
+		$attribute = ProductAttribute::factory()->create();
+        $product->addAttribute($attribute->name);
 		$size = rand(2,5);
 
 		$options = ProductAttributeValue::factory($size)->create();

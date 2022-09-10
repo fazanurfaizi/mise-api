@@ -18,7 +18,7 @@ class ProductAttributeFactory extends Factory
     public function definition()
     {
         return [
-            'product_id' => Product::factory()->create()->id,
+            // 'product_id' => Product::factory()->create()->id,
             'name' => $this->faker->word
         ];
     }

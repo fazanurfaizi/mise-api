@@ -8,16 +8,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 trait HasProducts
 {
     /**
-     * Get all of the products for the HasProducts
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function products(): HasMany
-    {
-        return $this->hasMany(Product::class);
-    }
-
-    /**
 	 * Assert if the Category has product based name or id
 	 *
 	 * @param string|int $product
@@ -40,7 +30,7 @@ trait HasProducts
 	 * @param string $sku
 	 * @return bool
 	 */
-    public function haProductBySku(string $sku): bool
+    public function hasProductBySku(string $sku): bool
     {
         return $this->products()->whereHas('skus', function ($query) use ($sku) {
             $query->where('code', $sku);

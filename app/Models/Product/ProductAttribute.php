@@ -5,7 +5,7 @@ namespace App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProductAttribute extends Model
@@ -19,7 +19,7 @@ class ProductAttribute extends Model
      * @var array
      */
     protected $fillable = [
-        'product_id',
+        // 'product_id',
         'name'
     ];
 
@@ -65,11 +65,18 @@ class ProductAttribute extends Model
     /**
      * Get the product that owns the Attribute
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function product(): BelongsTo
+    public function products(): BelongsToMany
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsToMany(
+            Product::class,
+            'product_has_attribute',
+            'attribute_id',
+            'product_id'
+        )->using(ProductHasAttribute::class)
+        ->withTimestamps()
+        ->whereNull('product_has_attribute.deleted_at');
     }
 
     /**

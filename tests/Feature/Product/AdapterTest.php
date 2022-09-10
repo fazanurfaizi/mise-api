@@ -24,7 +24,7 @@ class AdapterTest extends TestCase
         $productResource = new ProductAdapter($product);
 
         $this->assertArrayHasKey('slug', $productResource->transform(), 'It should return the response');
-        $this->assertArrayHasKey('category', $productResource->transform(), 'It should have keys');
+        $this->assertArrayHasKey('categories', $productResource->transform(), 'It should have keys');
     }
 
     /**
@@ -34,12 +34,12 @@ class AdapterTest extends TestCase
     {
         $product = Product::factory()->create();
         $size = rand(2, 4);
-        $attributes = ProductAttribute::factory($size)->make();
+        $attributes = ProductAttribute::factory($size)->create();
 
-        $product->addAttributes($attributes->toArray());
+        $product->addAttributes($attributes);
 
         $product->attributes->each(function(ProductAttribute $attribute) {
-            $terms = ProductAttributeValue::factory(3)->make();
+            $terms = ProductAttributeValue::factory(3)->create();
             $terms->each(function(ProductAttributeValue $term) use ($attribute) {
                 $attribute->addValue($term->value);
             });
@@ -48,7 +48,7 @@ class AdapterTest extends TestCase
         $productResource = new ProductAdapter($product);
 
         $this->assertArrayHasKey('attributes', $productResource->transform(), 'It should have an attributes');
-		$this->assertArrayHasKey('category', $productResource->transform(), 'It should have keys');
+		$this->assertArrayHasKey('categories', $productResource->transform(), 'It should have keys');
     }
 
     /**

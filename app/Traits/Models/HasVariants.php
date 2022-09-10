@@ -2,11 +2,11 @@
 
 namespace App\Traits\Models;
 
+use Exception;
 use App\Models\Product\ProductSku;
 use App\Models\Product\ProductVariant;
 use App\Exceptions\InvalidAttributeException;
 use App\Exceptions\InvalidVariantException;
-use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\ModelNotFoundException;

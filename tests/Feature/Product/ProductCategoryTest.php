@@ -22,11 +22,10 @@ class ProductCategoryTest extends TestCase
     public function itShouldHaveCategory()
     {
         $category = ProductCategory::factory()->create();
-        $product = Product::factory()->create([
-            'category_id' => $category->id
-        ]);
+        $product = Product::factory()->create();
+        $category->products()->sync($product);
 
-        $this->assertEquals($category->name, $product->category->name, 'Category should be attached to product');
+        $this->assertEquals($category->name, $product->categories()->first()->name, 'Category should be attached to product');
     }
 
     /**
@@ -51,9 +50,8 @@ class ProductCategoryTest extends TestCase
     public function itShouldListProductsByCategory()
     {
         $category = ProductCategory::factory()->create();
-        $products = Product::factory(rand(10, 20))->create([
-            'category_id' => $category->id
-        ]);
+        $products = Product::factory(rand(10, 20))->create();
+        $category->products()->sync($products);
 
         $this->assertEquals(sizeof($products->toArray()), sizeof($category->products->toArray()), 'It should have the same length');
     }

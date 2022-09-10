@@ -15,11 +15,11 @@ trait CreateProducts
     {
         $product = Product::factory()->create();
 
-        $sizeAttribute = ProductAttribute::factory()->make([
+        $sizeAttribute = ProductAttribute::factory()->create([
             'name' => 'size'
         ]);
         $sizeTerms = ['small', 'medium', 'large'];
-        $colorAttribute = ProductAttribute::factory()->make([
+        $colorAttribute = ProductAttribute::factory()->create([
             'name' => 'color'
         ]);
         $colorTerm = ['black', 'white'];

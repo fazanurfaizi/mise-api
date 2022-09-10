@@ -5,8 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
-use App\Http\Controllers\Admin\ProductCategoryController;
-use App\Http\Controllers\Admin\VariantController;
+use App\Http\Controllers\Admin\Product\ProductCategoryController;
+use App\Http\Controllers\Admin\Product\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,16 +41,14 @@ Route::controller(ProductCategoryController::class)
         Route::put('product-categories-multipleRestore', 'multipleRestore')->name('multiple-restore');
     });
 
-Route::apiResource('variants', VariantController::class)->parameters([
-    'variants' => 'id',
-]);
-Route::controller(VariantController::class)
-    ->as('variants')
+Route::apiResource('products', ProductController::class);
+Route::controller(ProductController::class)
+    ->as('products')
     ->group(function() {
-        Route::get('variants-bin', 'browseBin')->name('browse-bin');
-        Route::delete('variants-forceDestroy/{id}', 'forceDestroy')->name('force-destroy');
-        Route::post('variants-multipleDestroy', 'multipleDestroy')->name('multiple-destroy');
-        Route::post('variants-multipleForceDestroy', 'multipleForceDestroy')->name('multiple-force-destroy');
-        Route::put('variants-restore/{id}', 'restore')->name('restore');
-        Route::put('variants-multipleRestore', 'multipleRestore')->name('multiple-restore');
+        Route::get('products-bin', 'browseBin')->name('browse-bin');
+        // Route::delete('products-forceDestroy/{id}', 'forceDestroy')->name('force-destroy');
+        // Route::post('products-multipleDestroy', 'multipleDestroy')->name('multiple-destroy');
+        // Route::post('products-multipleForceDestroy', 'multipleForceDestroy')->name('multiple-force-destroy');
+        // Route::put('products-restore/{id}', 'restore')->name('restore');
+        // Route::put('products-multipleRestore', 'multipleRestore')->name('multiple-restore');
     });

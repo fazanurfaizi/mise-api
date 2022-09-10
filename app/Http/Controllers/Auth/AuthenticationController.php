@@ -20,6 +20,11 @@ use Illuminate\Support\Facades\Notification;
 
 class AuthenticationController extends Controller
 {
+
+    public function __construct() {
+        $this->middleware(['verified'])->except('login');
+    }
+
     public function login(LoginRequest $request)
     {
         $remember = $request->get('remember', false);
@@ -63,6 +68,8 @@ class AuthenticationController extends Controller
      */
     public function me()
     {
+        $this->middleware(['verified']);
+
         $user = AuthenticateUser::getUser();
 
         return response()->json($user);
@@ -71,6 +78,8 @@ class AuthenticationController extends Controller
     public function refresh()
     {
         try {
+            $this->middleware(['verified']);
+
             return TokenManager::fromAuth()->refreshToken(true, true)->response();
         } catch (Exception $e) {
             return response()->json([
@@ -82,6 +91,8 @@ class AuthenticationController extends Controller
     public function logout(Request $request)
     {
         try {
+            $this->middleware(['verified']);
+
             TokenManager::fromAuth()->deleteToken();
 
             return response()->json([

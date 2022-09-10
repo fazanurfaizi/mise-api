@@ -2,27 +2,31 @@
 
 namespace App\Traits\Models;
 
-use App\Exceptions\InvalidAttributeException;
 use Exception;
+use App\Exceptions\InvalidAttributeException;
 use App\Models\Product\ProductAttribute;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Product\ProductHasAttribute;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 trait HasAttributes
 {
     /**
      * Create a product attribute
      *
-     * @param string $attribute
+     * @param string $value
      * @throws Exception
      * @return $this
      */
-    public function addAttribute(string $attribute)
+    public function addAttribute(string $value)
     {
         DB::beginTransaction();
 
         try {
-            $this->attributes()->create(['name' => $attribute]);
+            $attribute = ProductAttribute::where(['name' => $value])->first();
+            $this->attributes()->attach($attribute);
 
             DB::commit();
         } catch (Exception $e) {
@@ -37,16 +41,18 @@ trait HasAttributes
     /**
      * Create multiple attribute
      *
-     * @param array $attribute
+     * @param \Illuminate\Database\Eloquent\Collection $attributes
      * @throws Exception
      * @return $this
      */
-    public function addAttributes(array $attributes)
+    public function addAttributes(Collection $attributes)
     {
         DB::beginTransaction();
 
         try {
-            $this->attributes()->createMany($attributes);
+            // $attributes = ProductAttribute::whereIn('id', $ids)->first();
+            $this->attributes()->attach($attributes->pluck('id')->toArray());
+            // $this->attributes()->sync($attributes);
 
             DB::commit();
         } catch (Exception $e) {
@@ -80,6 +86,25 @@ trait HasAttributes
         }
 
         return $this;
+    }
+
+     /**
+	 * Add Option Value on the attribute
+	 *
+	 * @param string $option
+	 * @param mixed $value
+	 * @throws Exception
+	 * @return App\Models\Product\ProductAttributeValue
+	 */
+    public function addAttributeTerm(string $option, $value)
+    {
+        $attribute = ProductAttribute::where('name', $option)->first();
+
+        if(!$attribute) {
+            throw new InvalidAttributeException("Invalid attribute", 422);
+        }
+
+        return $attribute->addValue($value);
     }
 
     /**
@@ -136,40 +161,31 @@ trait HasAttributes
     }
 
     /**
-	 * Add Option Value on the attribute
-	 *
-	 * @param string $option
-	 * @param mixed $value
-	 * @throws Exception
-	 * @return App\Models\Product\ProductAttributeValue
-	 */
-    public function addAttributeTerm(string $option, $value)
-    {
-        $attribute = $this->attributes()->where('name', $option)->first();
-
-        if(!$attribute) {
-            throw new InvalidAttributeException("Invalid attriibute", 422);
-        }
-
-        return $attribute->addValue($value);
-    }
-
-    /**
      * Get product attributes
      */
     public function loadAttributes()
     {
-        return $this->attributes()->get()->load('values');
+        DB::enableQueryLog();
+        $attributes = $this->attributes()->get()->load('values');
+        Log::info(DB::getQueryLog());
+        return $attributes;
     }
 
     /**
      * Get all of the attributes for the HasAttributes
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function attributes(): HasMany
+    public function attributes(): BelongsToMany
     {
-        return $this->hasMany(ProductAttribute::class, 'product_id', 'id');
+        return $this->belongsToMany(
+            ProductAttribute::class,
+            'product_has_attribute',
+            'product_id',
+            'attribute_id'
+        )->using(ProductHasAttribute::class)
+        ->withTimestamps()
+        ->whereNull('product_has_attribute.deleted_at');
     }
 
 }
