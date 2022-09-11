@@ -2,7 +2,7 @@
 
 namespace App\Adapters;
 
-use App\Http\Resources\Product\AttributeResource;
+use App\Http\Resources\Product\ProductAttributeResource;
 
 class ProductAttributeAdapter extends BaseAdapter
 {
@@ -12,7 +12,7 @@ class ProductAttributeAdapter extends BaseAdapter
      * @param mixed $model
      */
     public function __construct($model) {
-        parent::__construct(new AttributeResource($model));
+        parent::__construct(new ProductAttributeResource($model));
     }
 
     /**
@@ -24,7 +24,7 @@ class ProductAttributeAdapter extends BaseAdapter
     public static function collection($collection): array
     {
         $resource = new self($collection);
-        $resource->setResource(AttributeResource::collection($collection));
+        $resource->setResource(ProductAttributeResource::collection($collection));
 
         return $resource->transform();
     }

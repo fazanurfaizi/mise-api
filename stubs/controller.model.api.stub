@@ -77,10 +77,10 @@ class {{ class }} extends Controller
     /**
      * Force remove the specified resource from storage.
      *
-     * @param  \{{ namespacedModel }}  ${{ modelVariable }}
+     * @param   mixed $id
      * @return \Illuminate\Http\Response
      */
-    public function forceDestroy({{ model }} ${{ modelVariable }})
+    public function forceDestroy($id)
     {
         //
     }
@@ -110,10 +110,10 @@ class {{ class }} extends Controller
     /**
      * Restore the specified resource from storage.
      *
-     * @param  \{{ namespacedModel }}  ${{ modelVariable }}
+     * @param   mixed $id
      * @return \Illuminate\Http\Response
      */
-    public function restore({{ model }} ${{ modelVariable }})
+    public function restore($id)
     {
         //
     }

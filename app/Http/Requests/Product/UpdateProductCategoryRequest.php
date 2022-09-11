@@ -24,12 +24,11 @@ class UpdateProductCategoryRequest extends FormRequest
      */
     public function rules()
     {
-        $id = Request::route()->parameters()['id'];
+        $id = $this->route()->parameter('product_category')['id'];
 
         return [
             'parent_id' => 'nullable|exists:product_categories,id',
-            'name' => 'required|string|max:255',
-            'slug' => "required|string|max:255",
+            'name' => 'string|nullable|unique:product_categories,name,' . $id,
             'description' => 'nullable|string',
             'sku' => "nullable|string|max:255",
             'image' => 'nullable'

@@ -67,11 +67,10 @@ class ProductCategoryController extends Controller
      */
     public function store(StoreProductCategoryRequest $request)
     {
-        DB::beginTransaction();
-
         try {
+            DB::beginTransaction();
 
-            $productCategory = ProductCategory::create([
+            ProductCategory::create([
                 'parent_id' => $request->get('parent_id'),
                 'name' => $request->get('name'),
                 'slug' => $request->get('slug'),
@@ -96,12 +95,12 @@ class ProductCategoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  $id
+     * @param  \App\Models\Product\ProductCategory  $productCategory
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(ProductCategory $productCategory)
     {
-        $productCategory = ProductCategory::with('children')->where('id', $id)->first();
+        $productCategory->load(['children']);
 
         return response()->json([
             'data' => $productCategory
@@ -112,15 +111,13 @@ class ProductCategoryController extends Controller
      * Update the specified resource in storage.
      *
      * @param  UpdateProductCategoryRequest  $request
-     * @param  $id
+     * @param  \App\Models\Product\ProductCategory  $productCategory
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateProductCategoryRequest $request, $id)
+    public function update(UpdateProductCategoryRequest $request, ProductCategory $productCategory)
     {
-        DB::beginTransaction();
-
         try {
-            $productCategory = ProductCategory::findOrFail($id);
+            DB::beginTransaction();
 
             $productCategory->update([
                 'parent_id' => $request->get('parent_id'),
@@ -147,15 +144,15 @@ class ProductCategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  $id
+     * @param  \App\Models\Product\ProductCategory $productCategory
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(ProductCategory $productCategory)
     {
-        DB::beginTransaction();
-
         try {
-            ProductCategory::findOrFail($id)->delete();
+            DB::beginTransaction();
+
+            $productCategory->delete();
 
             DB::commit();
 
@@ -179,9 +176,9 @@ class ProductCategoryController extends Controller
      */
     public function forceDestroy($id)
     {
-        DB::beginTransaction();
-
         try {
+            DB::beginTransaction();
+
             ProductCategory::withTrashed()->findOrFail($id)->forceDelete();
 
             DB::commit();
@@ -206,9 +203,9 @@ class ProductCategoryController extends Controller
      */
     public function multipleDestroy(Request $request)
     {
-        DB::beginTransaction();
-
         try {
+            DB::beginTransaction();
+
             ProductCategory::query()
                 ->withTrashed()
                 ->whereIn('id', $request->post('ids'))
@@ -236,9 +233,9 @@ class ProductCategoryController extends Controller
      */
     public function multipleForceDestroy(Request $request)
     {
-        DB::beginTransaction();
-
         try {
+            DB::beginTransaction();
+
             ProductCategory::query()
                 ->withTrashed()
                 ->whereIn('id', $request->post('ids'))
@@ -266,9 +263,9 @@ class ProductCategoryController extends Controller
      */
     public function restore($id)
     {
-        DB::beginTransaction();
-
         try {
+            DB::beginTransaction();
+
             ProductCategory::withTrashed()->findOrFail($id)->restore();
 
             DB::commit();
@@ -293,9 +290,9 @@ class ProductCategoryController extends Controller
      */
     public function multipleRestore(Request $request)
     {
-        DB::beginTransaction();
-
         try {
+            DB::beginTransaction();
+
             ProductCategory::query()
                 ->withTrashed()
                 ->whereIn('id', $request->post('ids'))

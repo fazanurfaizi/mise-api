@@ -4,36 +4,34 @@ namespace App\Http\Controllers\Admin\Product;
 
 use Exception;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Product\StoreProductAttributeRequest;
-use App\Http\Requests\Product\UpdateProductAttributeRequest;
-use App\Http\Resources\Product\ProductAttributeResource;
-use App\Http\Resources\Product\ProductAttributeCollection;
-use App\Models\Product\ProductAttribute;
+use App\Http\Requests\Product\StoreBrandRequest;
+use App\Http\Requests\Product\UpdateBrandRequest;
+use App\Http\Resources\Product\BrandCollection;
+use App\Http\Resources\Product\BrandResource;
+use App\Models\Product\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\QueryBuilder;
 
-class ProductAttributeController extends Controller
+class BrandController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
     {
-        $productAttributes = QueryBuilder::for(ProductAttribute::class)
-            ->allowedFields(['id', 'name'])
-            ->allowedFilters(['name'])
+        $brands = QueryBuilder::for(Brand::class)
+            ->allowedFields(['id', 'name', 'website', 'is_enabled'])
+            ->allowedFilters(['name', 'is_enabled'])
             ->defaultSort('-created_at')
             ->allowedSorts('id', 'name')
-            ->allowedIncludes(['values'])
             ->jsonPaginate();
 
         return response()->json([
-            'data' => new ProductAttributeCollection($productAttributes)
+            'data' => new BrandCollection($brands)
         ], Response::HTTP_OK);
     }
 
@@ -45,38 +43,36 @@ class ProductAttributeController extends Controller
      */
     public function browseBin(Request $request)
     {
-        $productAttributes = QueryBuilder::for(ProductAttribute::class)
-            ->allowedFields(['id', 'name'])
-            ->allowedFilters(['name'])
+        $brands = QueryBuilder::for(Brand::class)
+            ->allowedFields(['id', 'name', 'website', 'is_enabled'])
+            ->allowedFilters(['name', 'is_enabled'])
             ->defaultSort('-created_at')
             ->allowedSorts('id', 'name')
-            ->allowedIncludes(['values'])
             ->onlyTrashed()
             ->jsonPaginate();
 
         return response()->json([
-            'data' => new ProductAttributeCollection($productAttributes)
+            'data' => new BrandCollection($brands)
         ], Response::HTTP_OK);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\Product\StoreProductAttributeRequest  $request
+     * @param  \App\Http\Requests\Product\StoreBrandRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreProductAttributeRequest $request)
+    public function store(StoreBrandRequest $request)
     {
         try {
             DB::beginTransaction();
 
-            $productAttribute = ProductAttribute::create([
-                'name' => $request->post('attribute')
+            Brand::create([
+                'name' => $request->post('name'),
+                'website' => $request->post('website'),
+                'description' => $request->post('description'),
+                'is_enabled' => $request->post('is_enabled'),
             ]);
-
-            if ($request->has('values')) {
-                $productAttribute->addValue($request->post('values'));
-            }
 
             DB::commit();
 
@@ -84,7 +80,7 @@ class ProductAttributeController extends Controller
                 'message' => __('Created successfully')
             ], Response::HTTP_CREATED);
         } catch (Exception $e) {
-            DB::rollback();
+            DB::rollBack();
 
             return response()->json([
                 'message' => $e->getMessage()
@@ -95,38 +91,34 @@ class ProductAttributeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Product\ProductAttribute  $productAttribute
+     * @param  \App\Models\Product\Brand  $brand
      * @return \Illuminate\Http\Response
      */
-    public function show(ProductAttribute $productAttribute)
+    public function show(Brand $brand)
     {
-        $productAttribute->load('values');
-
         return response()->json([
-            'data' => new ProductAttributeResource($productAttribute)
+            'data' => new BrandResource($brand)
         ], Response::HTTP_OK);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\Product\UpdateProductAttributeRequest  $request
-     * @param  \App\Models\Product\ProductAttribute  $productAttribute
+     * @param  \App\Http\Requests\Product\UpdateBrandRequest  $request
+     * @param  \App\Models\Product\Brand  $brand
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateProductAttributeRequest $request, ProductAttribute $productAttribute)
+    public function update(UpdateBrandRequest $request, Brand $brand)
     {
         try {
             DB::beginTransaction();
 
-            $productAttribute->update([
-                'name' => $request->post('attribute')
+            $brand->update([
+                'name' => $request->post('name', $brand->name),
+                'website' => $request->post('website', $brand->website),
+                'description' => $request->post('description', $brand->description),
+                'is_enabled' => $request->post('is_enabled', $brand->is_enabled),
             ]);
-
-            if ($request->has('values')) {
-                $productAttribute->values()->delete();
-                $productAttribute->addValue($request->post('values'));
-            }
 
             DB::commit();
 
@@ -145,16 +137,15 @@ class ProductAttributeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Product\ProductAttribute  $productAttribute
+     * @param  \App\Models\Product\Brand  $brand
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ProductAttribute $productAttribute)
+    public function destroy(Brand $brand)
     {
-        try {
-            DB::beginTransaction();
+        DB::beginTransaction();
 
-            $productAttribute->values()->delete();
-            $productAttribute->delete();
+        try {
+            $brand->delete();
 
             DB::commit();
 
@@ -181,9 +172,7 @@ class ProductAttributeController extends Controller
         try {
             DB::beginTransaction();
 
-            $productAttribute = ProductAttribute::withTrashed()->findOrFail($id);
-            $productAttribute->values()->forceDelete();
-            $productAttribute->forceDelete();
+            Brand::withTrashed()->findOrFail($id)->forceDelete();
 
             DB::commit();
 
@@ -210,9 +199,7 @@ class ProductAttributeController extends Controller
         try {
             DB::beginTransaction();
 
-            $productAttributes = ProductAttribute::whereIn('id', $request->post('ids'));
-            $productAttributes->each(fn($attribute) => $attribute->values()->delete());
-            $productAttributes->delete();
+            Brand::whereIn('id', $request->post('ids'))->delete();
 
             DB::commit();
 
@@ -239,9 +226,9 @@ class ProductAttributeController extends Controller
         try {
             DB::beginTransaction();
 
-            $productAttributes = ProductAttribute::withTrashed()->whereIn('id', $request->post('ids'));
-            $productAttributes->each(fn($attribute) => $attribute->values()->withTrashed()->forceDelete());
-            $productAttributes->forceDelete();
+            Brand::withTrashed()
+                ->whereIn('id', $request->post('ids'))
+                ->forceDelete();
 
             DB::commit();
 
@@ -268,9 +255,7 @@ class ProductAttributeController extends Controller
         try {
             DB::beginTransaction();
 
-            $productAttribute = ProductAttribute::withTrashed()->findOrFail($id);
-            $productAttribute->values()->restore();
-            $productAttribute->restore();
+            Brand::withTrashed()->findOrFail($id)->restore();
 
             DB::commit();
 
@@ -297,9 +282,9 @@ class ProductAttributeController extends Controller
         try {
             DB::beginTransaction();
 
-            $productAttributes = ProductAttribute::withTrashed()->whereIn('id', $request->post('ids'));
-            $productAttributes->each(fn($attribute) => $attribute->values()->withTrashed()->restore());
-            $productAttributes->restore();
+            Brand::withTrashed()
+                ->whereIn('id', $request->post('ids'))
+                ->restore();
 
             DB::commit();
 

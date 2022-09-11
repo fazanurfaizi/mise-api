@@ -4,7 +4,7 @@ namespace App\Http\Requests\Product;
 
 use App\Http\Requests\FormRequest;
 
-class UpdateProductAttributeRequest extends FormRequest
+class StoreBrandRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,11 +23,11 @@ class UpdateProductAttributeRequest extends FormRequest
      */
     public function rules()
     {
-        $id = $this->route()->parameter('product_attribute')['id'];
-
         return [
-            'attribute' => 'string|required|unique:product_attributes,name,' . $id,
-            'values' => 'nullable|array'
+            'name' => 'string|required|unique:brands,name',
+            'website' => 'string|nullable|unique:brands,website',
+            'description' => 'string|nullable',
+            'is_enabled' => 'nullable|boolean'
         ];
     }
 }
