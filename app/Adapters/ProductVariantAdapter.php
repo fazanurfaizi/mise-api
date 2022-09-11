@@ -2,7 +2,7 @@
 
 namespace App\Adapters;
 
-use App\Http\Resources\Product\VariantResource;
+use App\Http\Resources\Product\ProductVariantResource;
 
 class ProductVariantAdapter extends BaseAdapter
 {
@@ -12,7 +12,7 @@ class ProductVariantAdapter extends BaseAdapter
      * @param mixed $model
      */
     public function __construct($model) {
-        parent::__construct(new VariantResource($model));
+        parent::__construct(new ProductVariantResource($model));
     }
 
     /**
@@ -24,7 +24,7 @@ class ProductVariantAdapter extends BaseAdapter
     public static function collection($collection): array
     {
         $resource = new self($collection);
-        $resource->setResource(VariantResource::collection($collection));
+        $resource->setResource(ProductVariantResource::collection($collection));
 
         return $resource->transform();
     }

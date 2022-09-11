@@ -27,7 +27,7 @@ class ProductResource extends JsonResource
             'variations' => $this->whenLoaded(
                 'variations',
                 $this->when($this->hasAttributes() && $this->hasSku(),
-                    VariantResource::collection($this->skus)->toArray(app('request'))
+                    ProductVariantResource::collection($this->skus)->toArray(app('request'))
                 )
             )
         ];

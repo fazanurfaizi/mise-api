@@ -8,6 +8,7 @@ use App\Traits\Models\HasVariants;
 use App\Traits\Models\HasInventory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -28,7 +29,11 @@ class Product extends Model
     protected $fillable = [
         'name',
         'slug',
-        'description'
+        'description',
+        'condition',
+        'unit_value',
+        'unit_id',
+        'min_purchase'
     ];
 
     /**
@@ -62,6 +67,23 @@ class Product extends Model
         )->using(ProductHasCategory::class)
         ->withTimestamps()
         ->whereNull('product_has_category.deleted_at');
+    }
+
+    /**
+     * The units that belong to the Product
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function units(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            ProductUnit::class,
+            'product_has_unit',
+            'product_id',
+            'unit_id'
+        )->using(ProductHasUnit::class)
+        ->withTimestamps()
+        ->whereNull('product_has_unit.deleted_at');
     }
 
 }

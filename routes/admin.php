@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\Product\BrandController;
 use App\Http\Controllers\Admin\Product\ProductAttributeController;
 use App\Http\Controllers\Admin\Product\ProductCategoryController;
 use App\Http\Controllers\Admin\Product\ProductController;
+use App\Http\Controllers\Admin\Product\ProductUnitController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,6 +52,18 @@ Route::controller(BrandController::class)
         Route::post('brands-multipleForceDestroy', 'multipleForceDestroy')->name('multiple-force-destroy');
         Route::get('brands-restore/{id}', 'restore')->name('restore');
         Route::post('brands-multipleRestore', 'multipleRestore')->name('multiple-restore');
+    });
+
+Route::apiResource('product-units', ProductUnitController::class);
+Route::controller(ProductUnitController::class)
+    ->as('product-units')
+    ->group(function() {
+        Route::get('product-units-bin', 'browseBin')->name('browse-bin');
+        Route::delete('product-units-forceDestroy/{id}', 'forceDestroy')->name('force-destroy');
+        Route::post('product-units-multipleDestroy', 'multipleDestroy')->name('multiple-destroy');
+        Route::post('product-units-multipleForceDestroy', 'multipleForceDestroy')->name('multiple-force-destroy');
+        Route::get('product-units-restore/{id}', 'restore')->name('restore');
+        Route::post('product-units-multipleRestore', 'multipleRestore')->name('multiple-restore');
     });
 
 Route::apiResource('products', ProductController::class);

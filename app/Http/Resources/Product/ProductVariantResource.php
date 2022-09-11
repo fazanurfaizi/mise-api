@@ -4,7 +4,7 @@ namespace App\Http\Resources\Product;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class VariantResource extends JsonResource
+class ProductVariantResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -22,7 +22,7 @@ class VariantResource extends JsonResource
 			'description' => $this->product->description,
 			'price' => number_format($this->price, 2, '.', ''),
 			'cost' => number_format($this->cost, 2, '.', ''),
-			'categories' => collect($this->categories)->map(function($category) {
+			'categories' => collect($this->product->categories)->map(function($category) {
                 return [
                     'id' => $category->id,
                     'name' => $category->name

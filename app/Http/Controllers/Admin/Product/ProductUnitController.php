@@ -4,17 +4,16 @@ namespace App\Http\Controllers\Admin\Product;
 
 use Exception;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Product\StoreBrandRequest;
-use App\Http\Requests\Product\UpdateBrandRequest;
-use App\Http\Resources\Product\BrandCollection;
-use App\Http\Resources\Product\BrandResource;
-use App\Models\Product\Brand;
+use App\Http\Requests\Product\StoreProductUnitRequest;
+use App\Http\Requests\Product\UpdateProductUnitRequest;
+use App\Http\Resources\Product\ProductUnitCollection;
+use App\Models\Product\ProductUnit;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\QueryBuilder;
 
-class BrandController extends Controller
+class ProductUnitController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -23,15 +22,15 @@ class BrandController extends Controller
      */
     public function index(Request $request)
     {
-        $brands = QueryBuilder::for(Brand::class)
-            ->allowedFields(['id', 'name', 'website', 'is_enabled'])
-            ->allowedFilters(['name', 'is_enabled'])
+        $productUnits = QueryBuilder::for(ProductUnit::class)
+            ->allowedFields(['id', 'name', 'symbol', 'quantity'])
+            ->allowedFilters(['id', 'name'])
             ->defaultSort('-created_at')
             ->allowedSorts('id', 'name')
             ->jsonPaginate();
 
         return response()->json([
-            'data' => new BrandCollection($brands)
+            'data' => new ProductUnitCollection($productUnits)
         ], Response::HTTP_OK);
     }
 
@@ -43,35 +42,34 @@ class BrandController extends Controller
      */
     public function browseBin(Request $request)
     {
-        $brands = QueryBuilder::for(Brand::class)
-            ->allowedFields(['id', 'name', 'website', 'is_enabled'])
-            ->allowedFilters(['name', 'is_enabled'])
+        $productUnits = QueryBuilder::for(ProductUnit::class)
+            ->allowedFields(['id', 'name', 'symbol', 'quantity'])
+            ->allowedFilters(['id', 'name'])
             ->defaultSort('-created_at')
             ->allowedSorts('id', 'name')
             ->onlyTrashed()
             ->jsonPaginate();
 
         return response()->json([
-            'data' => new BrandCollection($brands)
+            'data' => new ProductUnitCollection($productUnits)
         ], Response::HTTP_OK);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\Product\StoreBrandRequest  $request
+     * @param  \App\Http\Requests\Product\StoreProductUnitRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreBrandRequest $request)
+    public function store(StoreProductUnitRequest $request)
     {
         try {
             DB::beginTransaction();
 
-            Brand::create([
+            ProductUnit::create([
                 'name' => $request->post('name'),
-                'website' => $request->post('website'),
-                'description' => $request->post('description'),
-                'is_enabled' => $request->post('is_enabled'),
+                'symbol' => $request->post('symbol'),
+                'quantity' => $request->post('quantity')
             ]);
 
             DB::commit();
@@ -91,42 +89,41 @@ class BrandController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Product\Brand  $brand
+     * @param  \App\Models\Product\ProductUnit  $productUnit
      * @return \Illuminate\Http\Response
      */
-    public function show(Brand $brand)
+    public function show(ProductUnit $productUnit)
     {
         return response()->json([
-            'data' => new BrandResource($brand)
+            'data' => $productUnit
         ], Response::HTTP_OK);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\Product\UpdateBrandRequest  $request
-     * @param  \App\Models\Product\Brand  $brand
+     * @param  \App\Http\Requests\Product\UpdateProductUnitRequest  $request
+     * @param  \App\Models\Product\ProductUnit  $productUnit
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateBrandRequest $request, Brand $brand)
+    public function update(UpdateProductUnitRequest $request, ProductUnit $productUnit)
     {
         try {
             DB::beginTransaction();
 
-            $brand->update([
-                'name' => $request->post('name', $brand->name),
-                'website' => $request->post('website', $brand->website),
-                'description' => $request->post('description', $brand->description),
-                'is_enabled' => $request->post('is_enabled', $brand->is_enabled),
+            $productUnit->update([
+                'name' => $request->post('name'),
+                'symbol' => $request->post('symbol'),
+                'quantity' => $request->post('quantity')
             ]);
 
             DB::commit();
 
             return response()->json([
-                'message' => __('Updated successfully')
+                'message' => __('Update successfully')
             ], Response::HTTP_CREATED);
         } catch (Exception $e) {
-            DB::rollback();
+            DB::rollBack();
 
             return response()->json([
                 'message' => $e->getMessage()
@@ -137,15 +134,15 @@ class BrandController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Product\Brand  $brand
+     * @param  \App\Models\Product\ProductUnit  $productUnit
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Brand $brand)
+    public function destroy(ProductUnit $productUnit)
     {
         try {
             DB::beginTransaction();
 
-            $brand->delete();
+            $productUnit->delete();
 
             DB::commit();
 
@@ -164,7 +161,7 @@ class BrandController extends Controller
     /**
      * Force remove the specified resource from storage.
      *
-     * @param  mixed $id
+     * @param   mixed $id
      * @return \Illuminate\Http\Response
      */
     public function forceDestroy($id)
@@ -172,7 +169,7 @@ class BrandController extends Controller
         try {
             DB::beginTransaction();
 
-            Brand::withTrashed()->findOrFail($id)->forceDelete();
+            ProductUnit::withTrashed()->findOrFail($id)->forceDelete();
 
             DB::commit();
 
@@ -199,7 +196,7 @@ class BrandController extends Controller
         try {
             DB::beginTransaction();
 
-            Brand::whereIn('id', $request->post('ids'))->delete();
+            ProductUnit::whereIn('id', $request->post('ids'))->delete();
 
             DB::commit();
 
@@ -226,7 +223,7 @@ class BrandController extends Controller
         try {
             DB::beginTransaction();
 
-            Brand::withTrashed()
+            ProductUnit::withTrashed()
                 ->whereIn('id', $request->post('ids'))
                 ->forceDelete();
 
@@ -247,7 +244,7 @@ class BrandController extends Controller
     /**
      * Restore the specified resource from storage.
      *
-     * @param  mixed $id
+     * @param   mixed $id
      * @return \Illuminate\Http\Response
      */
     public function restore($id)
@@ -255,7 +252,7 @@ class BrandController extends Controller
         try {
             DB::beginTransaction();
 
-            Brand::withTrashed()->findOrFail($id)->restore();
+            ProductUnit::withTrashed()->findOrFail($id)->restore();
 
             DB::commit();
 
@@ -282,7 +279,7 @@ class BrandController extends Controller
         try {
             DB::beginTransaction();
 
-            Brand::withTrashed()
+            ProductUnit::withTrashed()
                 ->whereIn('id', $request->post('ids'))
                 ->restore();
 
