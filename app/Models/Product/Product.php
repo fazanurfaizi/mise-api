@@ -82,6 +82,7 @@ class Product extends Model
             'product_id',
             'unit_id'
         )->using(ProductHasUnit::class)
+        ->withPivot('value')
         ->withTimestamps()
         ->whereNull('product_has_unit.deleted_at');
     }

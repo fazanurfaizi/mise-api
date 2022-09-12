@@ -21,6 +21,10 @@ class ProductHasUnit extends Pivot
 
     protected $table = "product_has_unit";
 
+    protected $fillable = [
+        'value'
+    ];
+
     /**
      * Get the product that owns the ProductHasUnit
      *
