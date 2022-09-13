@@ -19,7 +19,8 @@ class ProductAttributeValue extends Model
      * @var array
      */
     protected $fillable = [
-        'attribute_id', 'value'
+        'attribute_id',
+        'value'
     ];
 
     /**

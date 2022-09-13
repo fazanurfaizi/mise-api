@@ -6,12 +6,13 @@ use Exception;
 use App\Models\Product\Product;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\StoreProductRequest;
+use App\Http\Resources\Product\ProductCollection;
+use App\Http\Resources\Product\ProductResource;
 use App\Models\Product\ProductAttribute;
 use App\Models\Product\ProductAttributeValue;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends Controller
@@ -35,7 +36,7 @@ class ProductController extends Controller
             ->jsonPaginate();
 
         return response()->json([
-            'data' => $products
+            'data' => new ProductCollection($products)
         ], Response::HTTP_OK);
     }
 
@@ -56,7 +57,7 @@ class ProductController extends Controller
             ->jsonPaginate();
 
         return response()->json([
-            'data' => $products
+            'data' => new ProductCollection($products)
         ], Response::HTTP_OK);
     }
 
@@ -86,7 +87,8 @@ class ProductController extends Controller
                 collect($request->images)->each(
                     fn ($file) => $product
                         ->addMedia($file)
-                        ->toMediaCollection('uploads')
+                        ->withResponsiveImages()
+                        ->toMediaCollection('products')
                 );
             }
 
@@ -140,10 +142,10 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        $product->load(['categories', 'variants']);
+        $product->load(['brand', 'categories', 'units', 'media', 'variants']);
 
         return response()->json([
-            'data' => $product
+            'data' => new ProductResource($product)
         ], Response::HTTP_OK);
     }
 

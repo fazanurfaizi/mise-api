@@ -1,10 +1,10 @@
 <?php
 
-namespace {{ namespace }};
+namespace App\Http\Resources\Product;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class {{ class }} extends ResourceCollection
+class ProductCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -18,7 +18,7 @@ class {{ class }} extends ResourceCollection
         $hasLimit = $limit ? '&limit=' . $limit : '';
 
         return [
-            'collection' => $this->collection,
+            'collection' => ProductResource::collection($this->collection),
             'pagination' => [
                 "current_page" => $this->currentPage(),
                 "first_page_url" => $this->getOptions()['path'].'?'.$this->getOptions()['pageName'].'=1'.$hasLimit,

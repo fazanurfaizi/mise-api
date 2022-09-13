@@ -40,16 +40,19 @@ class ProductAttribute extends Model
     public function addValue($value)
     {
         if(is_array($value)) {
-            $terms = collect($value)->map(function($term) {
+            collect($value)->map(function($term) {
                 return ['value' => $term];
             })
             ->values()
-            ->toArray();
+            ->each(function($term) {
+                $this->values()->firstOrCreate($term);
+            });
 
-            return $this->values()->createMany($terms);
+            // return $this->values()->createMany($terms);
         }
 
-        return $this->values()->create(['value' => $value]);
+        $this->values()->firstOrCreate(['value' => $value]);
+        // return $this->values()->create(['value' => $value]);
     }
 
     /**

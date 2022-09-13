@@ -9,7 +9,6 @@ use App\Models\Product\ProductHasAttribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 trait HasAttributes
 {
