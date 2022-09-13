@@ -169,6 +169,23 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        try {
+            DB::beginTransaction();
+
+            $product->skus()->delete();
+            $product->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => __('Deleted successfully')
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            DB::rollback();
+
+            return response()->json([
+                'message' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }

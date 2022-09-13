@@ -4,20 +4,15 @@ namespace App\Models\Product;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProductHasAttribute extends Pivot
 {
-    use SoftDeletes;
-
     /**
      * Indicates if the IDs are auto-incrementing.
      *
      * @var bool
      */
     public $incrementing = true;
-
-    protected $dates = [ 'deleted_at' ];
 
     protected $table = "product_has_attribute";
 
