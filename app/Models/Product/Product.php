@@ -2,6 +2,7 @@
 
 namespace App\Models\Product;
 
+use App\Enums\ProductCondition;
 use App\Traits\Models\Sluggable;
 use App\Traits\Models\HasAttributes;
 use App\Traits\Models\HasVariants;
@@ -11,15 +12,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Image\Manipulations;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Product extends Model
+class Product extends Model implements HasMedia
 {
     use HasFactory,
         SoftDeletes,
         Sluggable,
         HasAttributes,
         HasVariants,
-        HasInventory;
+        HasInventory,
+        InteractsWithMedia;
 
     /**
 	 * Fields that are mass assignable
@@ -28,12 +34,12 @@ class Product extends Model
 	 */
     protected $fillable = [
         'name',
+        'brand_id',
         'slug',
         'description',
         'condition',
-        'unit_value',
-        'unit_id',
-        'min_purchase'
+        'min_purchase',
+        'featured'
     ];
 
     /**
@@ -42,8 +48,19 @@ class Product extends Model
 	 * @var array
 	 */
 	protected $guarded = [
-		'id', 'created_at', 'updated_at'
+		'id',
+        'created_at',
+        'updated_at'
 	];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'condition' => ProductCondition::class,
+    ];
 
     /**
 	 * Sluggable field of the model
@@ -51,6 +68,16 @@ class Product extends Model
 	 * @var string
 	 */
 	protected $sluggable = 'name';
+
+    /**
+     * Get the brand that owns the Product
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class);
+    }
 
     /**
      * Get the categories that owns the Product
@@ -85,6 +112,17 @@ class Product extends Model
         ->withPivot('value')
         ->withTimestamps()
         ->whereNull('product_has_unit.deleted_at');
+    }
+
+    /**
+     * Generate image thumbnail
+     */
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this
+            ->addMediaConversion('preview')
+            ->fit(Manipulations::FIT_CROP, 300, 300)
+            ->nonQueued();
     }
 
 }

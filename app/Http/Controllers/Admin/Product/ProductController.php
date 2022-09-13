@@ -5,9 +5,13 @@ namespace App\Http\Controllers\Admin\Product;
 use Exception;
 use App\Models\Product\Product;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Product\StoreProductRequest;
+use App\Models\Product\ProductAttribute;
+use App\Models\Product\ProductAttributeValue;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends Controller
@@ -59,12 +63,73 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\Product\StoreProductRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        //
+        try {
+            DB::beginTransaction();
+
+            $product = Product::create([
+                'name' => $request->post('name'),
+                'brand_id' => $request->post('brand_id'),
+                'description' => $request->post('description'),
+                'condition' => $request->post('condition'),
+                'min_purchase' => $request->post('min_purchase'),
+                'featured' => $request->post('featured'),
+            ]);
+
+            $product->categories()->sync($request->post('categories'));
+
+            if($request->hasFile('images')) {
+                collect($request->images)->each(
+                    fn ($file) => $product
+                        ->addMedia($file)
+                        ->toMediaCollection('uploads')
+                );
+            }
+
+            if($request->has('units')) {
+                foreach ($request->post('units') as $unit) {
+                    $product->units()->attach($unit['unit'], [
+                        'value' => $unit['value']
+                    ]);
+                }
+            }
+
+            if($request->has('skus')) {
+                foreach ($request->skus as $sku) {
+                    collect($sku['variant'])->each(function($variant) use ($product) {
+                        ProductAttribute::firstOrCreate([
+                            'name' => $variant['option']
+                        ]);
+
+                        $product->addAttribute($variant['option']);
+                        $product->addAttributeTerm($variant['option'], $variant['value']);
+                    });
+
+                    $product->addVariant([
+                        'sku' => $sku['code'],
+                        'price' => $sku['price'],
+                        'cost' => $sku['cost'],
+                        'variant' => $sku['variant']
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => __('Created successfully')
+            ], Response::HTTP_CREATED);
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**

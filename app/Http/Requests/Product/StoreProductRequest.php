@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Product;
 
 use App\Http\Requests\FormRequest;
+use Illuminate\Validation\Rules\Enum;
+use ProductCondition;
 
 class StoreProductRequest extends FormRequest
 {
@@ -25,15 +27,23 @@ class StoreProductRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:products',
+            'brand_id' => 'required|exists:brands,id',
             'description' => 'nullable|string',
-            'items' => 'required|array',
-            'items.*.discount_id' => 'nullable|integer|exists:discounts,id',
-            'items.*.variant_id' => 'nullable|integer|exists:variants,id',
-            'items.*.name' => 'required|string|max:255',
-            'items.*.quantity' => 'required|integer|min:0',
-            'items.*.price' => 'required|integer|min:0',
-            'items.*.sku' => 'nullable|string',
+            'condition' => 'required|in:new,second',
+            'min_purchase' => 'required|integer',
+            'featured' => 'required|boolean',
+            'categories' => 'required|array|exists:product_categories,id',
+            'images.*' => 'mimes:jpeg,jpg,png,video/x-flv,video/mp4,application/x-mpegURL,video/MP2T,video/3gpp,video/quicktime,video/x-msvideo,video/x-ms-wmv|max:2048',
+            'units' => 'required|array',
+            'units.*.unit' => 'required|exists:product_units,id',
+            'units.*.value' => 'required',
+            'skus' => 'required|array',
+            'skus.*.code' => 'required|string',
+            'skus.*.price' => 'required|regex:/^\d+(\.\d{1,2})?$/',
+            'skus.*.cost' => 'required|regex:/^\d+(\.\d{1,2})?$/',
+            'skus.*.variant' => 'array',
+            'skus.*.variant.*.option' => 'string',
+            'skus.*.variant.*.value' => 'string'
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models\Product;
 
+use App\Models\Inventory\InventoryStock;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -18,7 +19,10 @@ class ProductSku extends Model
      * @var array
      */
     protected $fillable = [
-        'product_id', 'code', 'price', 'cost'
+        'product_id',
+        'code',
+        'price',
+        'cost'
     ];
 
     /**
