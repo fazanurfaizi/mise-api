@@ -4,7 +4,7 @@ namespace App\Http\Requests\Product;
 
 use App\Http\Requests\FormRequest;
 
-class StoreProductRequest extends FormRequest
+class UpdateProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,10 +19,12 @@ class StoreProductRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function rules()
     {
+        $id = $this->route()->parameter('product')['id'];
+
         return [
             'name' => 'required|string|max:255',
             'brand_id' => 'required|exists:brands,id',
@@ -35,13 +37,6 @@ class StoreProductRequest extends FormRequest
             'units' => 'required|array',
             'units.*.unit' => 'required|exists:product_units,id',
             'units.*.value' => 'required',
-            'skus' => 'required|array',
-            'skus.*.code' => 'required|string',
-            'skus.*.price' => 'required|regex:/^\d+(\.\d{1,2})?$/',
-            'skus.*.cost' => 'required|regex:/^\d+(\.\d{1,2})?$/',
-            'skus.*.variant' => 'array',
-            'skus.*.variant.*.option' => 'string',
-            'skus.*.variant.*.value' => 'string'
         ];
     }
 }

@@ -16,6 +16,20 @@ namespace App\Actions\Product;
 class CreateProduct
 {
 }
+/**
+ * @method static \Lorisleiva\Actions\Decorators\JobDecorator|\Lorisleiva\Actions\Decorators\UniqueJobDecorator makeJob(\App\Http\Requests\Product\UpdateProductRequest $request, \App\Models\Product\Product $product)
+ * @method static \Lorisleiva\Actions\Decorators\UniqueJobDecorator makeUniqueJob(\App\Http\Requests\Product\UpdateProductRequest $request, \App\Models\Product\Product $product)
+ * @method static \Illuminate\Foundation\Bus\PendingDispatch dispatch(\App\Http\Requests\Product\UpdateProductRequest $request, \App\Models\Product\Product $product)
+ * @method static \Illuminate\Foundation\Bus\PendingDispatch|\Illuminate\Support\Fluent dispatchIf(bool $boolean, \App\Http\Requests\Product\UpdateProductRequest $request, \App\Models\Product\Product $product)
+ * @method static \Illuminate\Foundation\Bus\PendingDispatch|\Illuminate\Support\Fluent dispatchUnless(bool $boolean, \App\Http\Requests\Product\UpdateProductRequest $request, \App\Models\Product\Product $product)
+ * @method static dispatchSync(\App\Http\Requests\Product\UpdateProductRequest $request, \App\Models\Product\Product $product)
+ * @method static dispatchNow(\App\Http\Requests\Product\UpdateProductRequest $request, \App\Models\Product\Product $product)
+ * @method static dispatchAfterResponse(\App\Http\Requests\Product\UpdateProductRequest $request, \App\Models\Product\Product $product)
+ * @method static \App\Models\Product\Product run(\App\Http\Requests\Product\UpdateProductRequest $request, \App\Models\Product\Product $product)
+ */
+class UpdateProduct
+{
+}
 namespace Lorisleiva\Actions\Concerns;
 
 /**

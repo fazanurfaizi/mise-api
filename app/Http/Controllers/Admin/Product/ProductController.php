@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers\Admin\Product;
 
-use App\Actions\Product\CreateProduct;
 use Exception;
+use App\Actions\Product\CreateProduct;
+use App\Actions\Product\UpdateProduct;
 use App\Models\Product\Product;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\StoreProductRequest;
+use App\Http\Requests\Product\UpdateProductRequest;
 use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Product\ProductResource;
-use App\Models\Product\ProductAttribute;
-use App\Models\Product\ProductAttributeValue;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends Controller
@@ -108,42 +107,16 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\Product\UpdateProductRequest $request
      * @param  \App\Models\Product\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product)
     {
         try {
             DB::beginTransaction();
 
-            $product->update([
-                'name' => $request->post('name'),
-                'brand_id' => $request->post('brand_id'),
-                'description' => $request->post('description'),
-                'condition' => $request->post('condition'),
-                'min_purchase' => $request->post('min_purchase'),
-                'featured' => $request->post('featured'),
-            ]);
-
-            $product->categories()->sync($request->post('categories'));
-
-            if($request->hasFile('images')) {
-                collect($request->images)->each(
-                    fn ($file) => $product
-                        ->addMedia($file)
-                        ->withResponsiveImages()
-                        ->toMediaCollection('products')
-                );
-            }
-
-            if($request->has('units')) {
-                foreach ($request->post('units') as $unit) {
-                    $product->units()->attach($unit['unit'], [
-                        'value' => $unit['value']
-                    ]);
-                }
-            }
+            UpdateProduct::run($request, $product);
 
             DB::commit();
 

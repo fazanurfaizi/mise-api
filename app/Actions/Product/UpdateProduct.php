@@ -2,24 +2,24 @@
 
 namespace App\Actions\Product;
 
-use App\Http\Requests\Product\StoreProductRequest;
+use App\Http\Requests\Product\UpdateProductRequest;
 use App\Models\Product\Product;
-use App\Models\Product\ProductAttribute;
 use Lorisleiva\Actions\Concerns\AsAction;
 
-class CreateProduct
+class UpdateProduct
 {
     use AsAction;
 
     /**
-     * Store product action.
+     * Update product action
      *
-     * @param  \App\Http\Requests\Product\StoreProductRequest $request
-     * @return \App\Models\Product\Product
+     * @param \App\Http\Requests\Product\UpdateProductRequest $request
+     * @param \App\Models\Product\Product $product
+     * @return \App\Models\Product\Product $product
      */
-    public function handle(StoreProductRequest $request)
+    public function handle(UpdateProductRequest $request, Product $product): Product
     {
-        $product = Product::create([
+        $product->update([
             'name' => $request->post('name'),
             'brand_id' => $request->post('brand_id'),
             'description' => $request->post('description'),
@@ -43,26 +43,6 @@ class CreateProduct
             foreach ($request->post('units') as $unit) {
                 $product->units()->attach($unit['unit'], [
                     'value' => $unit['value']
-                ]);
-            }
-        }
-
-        if($request->has('skus')) {
-            foreach ($request->skus as $sku) {
-                collect($sku['variant'])->each(function($variant) use ($product) {
-                    ProductAttribute::firstOrCreate([
-                        'name' => $variant['option']
-                    ]);
-
-                    $product->addAttribute($variant['option']);
-                    $product->addAttributeTerm($variant['option'], $variant['value']);
-                });
-
-                $product->addVariant([
-                    'sku' => $sku['code'],
-                    'price' => $sku['price'],
-                    'cost' => $sku['cost'],
-                    'variant' => $sku['variant']
                 ]);
             }
         }
