@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Exception;
 use App\Exceptions\LockedException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
@@ -10,11 +11,9 @@ use App\Models\Auth\UserVerification;
 use App\Notifications\VerifyEmailNotification;
 use App\Services\Auth\TokenManager;
 use App\Services\Auth\AuthenticateUser;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 
@@ -38,14 +37,11 @@ class AuthenticationController extends Controller
 
         $credentials = $request->only($username, 'password');
 
-        DB::beginTransaction();
-
         if(Auth::attempt($credentials)) {
             try {
                 $user = Auth::user();
                 $this->checkIfUserHasVerifiedEmail($user, $request);
 
-                DB::commit();
                 return TokenManager::fromUser($user)->createToken($request, $remember)->response();
             } catch (LockedException $e) {
                 return response()->json([
@@ -53,8 +49,6 @@ class AuthenticationController extends Controller
                 ], Response::HTTP_LOCKED);
             }
         } else {
-            DB::rollback();
-
             return response()->json([
                 'message' => 'Incorrect email or password'
             ], Response::HTTP_UNAUTHORIZED);

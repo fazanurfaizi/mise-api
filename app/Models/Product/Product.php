@@ -92,8 +92,7 @@ class Product extends Model implements HasMedia
             'product_id',
             'category_id'
         )->using(ProductHasCategory::class)
-        ->withTimestamps()
-        ->whereNull('product_has_category.deleted_at');
+        ->withTimestamps();
     }
 
     /**
@@ -110,8 +109,7 @@ class Product extends Model implements HasMedia
             'unit_id'
         )->using(ProductHasUnit::class)
         ->withPivot('value')
-        ->withTimestamps()
-        ->whereNull('product_has_unit.deleted_at');
+        ->withTimestamps();
     }
 
     /**

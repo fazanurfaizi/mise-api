@@ -180,8 +180,7 @@ trait HasAttributes
             'product_id',
             'attribute_id'
         )->using(ProductHasAttribute::class)
-        ->withTimestamps()
-        ->whereNull('product_has_attribute.deleted_at');
+        ->withTimestamps();
     }
 
 }

@@ -38,7 +38,7 @@ Route::controller(ProductCategoryController::class)
         Route::delete('product-categories-forceDestroy/{id}', 'forceDestroy')->name('force-destroy');
         Route::post('product-categories-multipleDestroy', 'multipleDestroy')->name('multiple-destroy');
         Route::post('product-categories-multipleForceDestroy', 'multipleForceDestroy')->name('multiple-force-destroy');
-        Route::put('product-categories-restore/{id}', 'restore')->name('restore');
+        Route::get('product-categories-restore/{id}', 'restore')->name('restore');
         Route::put('product-categories-multipleRestore', 'multipleRestore')->name('multiple-restore');
     });
 
@@ -51,7 +51,7 @@ Route::controller(BrandController::class)
         Route::post('brands-multipleDestroy', 'multipleDestroy')->name('multiple-destroy');
         Route::post('brands-multipleForceDestroy', 'multipleForceDestroy')->name('multiple-force-destroy');
         Route::get('brands-restore/{id}', 'restore')->name('restore');
-        Route::post('brands-multipleRestore', 'multipleRestore')->name('multiple-restore');
+        Route::put('brands-multipleRestore', 'multipleRestore')->name('multiple-restore');
     });
 
 Route::apiResource('product-units', ProductUnitController::class);
@@ -63,7 +63,7 @@ Route::controller(ProductUnitController::class)
         Route::post('product-units-multipleDestroy', 'multipleDestroy')->name('multiple-destroy');
         Route::post('product-units-multipleForceDestroy', 'multipleForceDestroy')->name('multiple-force-destroy');
         Route::get('product-units-restore/{id}', 'restore')->name('restore');
-        Route::post('product-units-multipleRestore', 'multipleRestore')->name('multiple-restore');
+        Route::put('product-units-multipleRestore', 'multipleRestore')->name('multiple-restore');
     });
 
 Route::apiResource('products', ProductController::class);
@@ -71,11 +71,11 @@ Route::controller(ProductController::class)
     ->as('products')
     ->group(function() {
         Route::get('products-bin', 'browseBin')->name('browse-bin');
-        // Route::delete('products-forceDestroy/{id}', 'forceDestroy')->name('force-destroy');
-        // Route::post('products-multipleDestroy', 'multipleDestroy')->name('multiple-destroy');
-        // Route::post('products-multipleForceDestroy', 'multipleForceDestroy')->name('multiple-force-destroy');
-        // Route::put('products-restore/{id}', 'restore')->name('restore');
-        // Route::put('products-multipleRestore', 'multipleRestore')->name('multiple-restore');
+        Route::delete('products-forceDestroy/{id}', 'forceDestroy')->name('force-destroy');
+        Route::post('products-multipleDestroy', 'multipleDestroy')->name('multiple-destroy');
+        Route::post('products-multipleForceDestroy', 'multipleForceDestroy')->name('multiple-force-destroy');
+        Route::get('products-restore/{id}', 'restore')->name('restore');
+        Route::put('products-multipleRestore', 'multipleRestore')->name('multiple-restore');
     });
 
 Route::apiResource('product-attributes', ProductAttributeController::class);
@@ -87,5 +87,5 @@ Route::controller(ProductAttributeController::class)
         Route::post('product-attributes-multipleDestroy', 'multipleDestroy')->name('multiple-destroy');
         Route::post('product-attributes-multipleForceDestroy', 'multipleForceDestroy')->name('multiple-force-destroy');
         Route::get('product-attributes-restore/{id}', 'restore')->name('restore');
-        Route::post('product-attributes-multipleRestore', 'multipleRestore')->name('multiple-restore');
+        Route::put('product-attributes-multipleRestore', 'multipleRestore')->name('multiple-restore');
     });
