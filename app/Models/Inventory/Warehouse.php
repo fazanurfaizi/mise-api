@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-use function GuzzleHttp\Promise\queue;
-
 class Warehouse extends Model
 {
     use HasFactory,

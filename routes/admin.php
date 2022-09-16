@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\Inventory\WarehouseController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Admin\UserController;
@@ -92,3 +93,15 @@ Route::controller(ProductController::class)
     });
 
 Route::apiResource('products.skus', ProductSkuController::class)->except('update')->shallow();
+
+Route::apiResource('warehouses', WarehouseController::class);
+Route::controller(WarehouseController::class)
+    ->as('warehouses')
+    ->group(function() {
+        Route::get('warehouses-bin', 'browseBin')->name('browse-bin');
+        Route::delete('warehouses-forceDestroy/{id}', 'forceDestroy')->name('force-destroy');
+        Route::post('warehouses-multipleDestroy', 'multipleDestroy')->name('multiple-destroy');
+        Route::post('warehouses-multipleForceDestroy', 'multipleForceDestroy')->name('multiple-force-destroy');
+        Route::get('warehouses-restore/{id}', 'restore')->name('restore');
+        Route::put('warehouses-multipleRestore', 'multipleRestore')->name('multiple-restore');
+    });
