@@ -77,7 +77,7 @@ trait HasVariants
 
                 $this->variants()->updateOrCreate(
                 [
-                    'product_id' => $this->{$this->getKeyName()},
+                    'product_id' => $this->getKey(),
                     'product_sku_id' => $sku->id,
                     'attribute_id' => $attribute->id,
                     'attribute_value_id' => $value->id,

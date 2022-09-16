@@ -2,7 +2,7 @@
 
 namespace App\Models\Product;
 
-use App\Models\Inventory\InventoryStock;
+use App\Traits\Models\HasItemStocks;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,7 +11,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProductSku extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory,
+        SoftDeletes,
+        HasItemStocks;
 
     /**
      * Fields that can be mass assigned
@@ -52,15 +54,5 @@ class ProductSku extends Model
     public function variants(): HasMany
     {
         return $this->hasMany(ProductVariant::class, 'product_sku_id');
-    }
-
-    /**
-     * Get all of the stocks for the ProductSku
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function stocks(): HasMany
-    {
-        return $this->hasMany(InventoryStock::class);
     }
 }

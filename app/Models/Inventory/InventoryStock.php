@@ -3,7 +3,7 @@
 namespace App\Models\Inventory;
 
 use App\Models\Product\ProductSku;
-use App\Traits\Models\HasItemStocks;
+use App\Traits\Models\HasInventoryStocks;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class InventoryStock extends Model
 {
     use HasFactory,
-        HasItemStocks,
+        HasInventoryStocks,
         SoftDeletes;
 
     /**
@@ -27,7 +27,8 @@ class InventoryStock extends Model
         'product_sku_id',
         'quantity',
         'aisle',
-        'row'
+        'row',
+        'bin'
     ];
 
     /**
