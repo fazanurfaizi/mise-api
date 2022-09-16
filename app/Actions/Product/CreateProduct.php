@@ -2,9 +2,9 @@
 
 namespace App\Actions\Product;
 
-use App\Http\Requests\Product\StoreProductRequest;
 use App\Models\Product\Product;
 use App\Models\Product\ProductAttribute;
+use Illuminate\Http\Request;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 class CreateProduct
@@ -14,10 +14,10 @@ class CreateProduct
     /**
      * Store product action.
      *
-     * @param  \App\Http\Requests\Product\StoreProductRequest $request
+     * @param  \Illuminate\Http\Request $request
      * @return \App\Models\Product\Product
      */
-    public function handle(StoreProductRequest $request)
+    public function handle(Request $request)
     {
         $product = Product::create([
             'name' => $request->post('name'),

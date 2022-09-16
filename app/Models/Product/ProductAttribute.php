@@ -47,12 +47,9 @@ class ProductAttribute extends Model
             ->each(function($term) {
                 $this->values()->firstOrCreate($term);
             });
-
-            // return $this->values()->createMany($terms);
         }
 
         $this->values()->firstOrCreate(['value' => $value]);
-        // return $this->values()->create(['value' => $value]);
     }
 
     /**

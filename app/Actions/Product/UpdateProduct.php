@@ -2,8 +2,8 @@
 
 namespace App\Actions\Product;
 
-use App\Http\Requests\Product\UpdateProductRequest;
 use App\Models\Product\Product;
+use Illuminate\Http\Request;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 class UpdateProduct
@@ -13,11 +13,11 @@ class UpdateProduct
     /**
      * Update product action
      *
-     * @param \App\Http\Requests\Product\UpdateProductRequest $request
+     * @param \Illuminate\Http\Request $request
      * @param \App\Models\Product\Product $product
      * @return \App\Models\Product\Product $product
      */
-    public function handle(UpdateProductRequest $request, Product $product): Product
+    public function handle(Request $request, Product $product): Product
     {
         $product->update([
             'name' => $request->post('name'),

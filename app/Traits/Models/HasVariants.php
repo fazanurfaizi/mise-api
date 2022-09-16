@@ -46,9 +46,10 @@ trait HasVariants
 	 * Add Variant to the product
 	 *
 	 * @param array $variant
+     * @param int|null $productSkuId
      * @throws InvalidVariantException
 	 */
-    public function addVariant($variant)
+    public function addVariant($variant, $productSkuId = null)
     {
         DB::beginTransaction();
 
@@ -56,12 +57,15 @@ trait HasVariants
             // if the give given variant array doesn't match the structure we want
 			// it will automatically throw an InvalidVariant Exception
 			// Verify if the given variant attributes already exist in the variants db
-            if(in_array($this->sortAttributes($variant['variant']), $this->getVariants())) {
+            if(
+                in_array($this->sortAttributes($variant['variant']), $this->getVariants())
+                && is_null($productSkuId)
+            ) {
                 throw new InvalidVariantException("Duplicate variation attributes!", 400);
             }
 
             // Create the sku first, so basically you can't add new attributes to the sku
-            $sku = $this->skus()->create([
+            $sku = $this->skus()->updateOrCreate(['id' => $productSkuId], [
                 'code' => $variant['sku'],
                 'price' => $variant['price'],
                 'cost' => $variant['cost']
@@ -71,7 +75,14 @@ trait HasVariants
                 $attribute = $this->attributes()->where('name', $item['option'])->firstOrFail();
                 $value = $attribute->values()->where('value', $item['value'])->firstOrFail();
 
-                $this->variants()->create([
+                $this->variants()->updateOrCreate(
+                [
+                    'product_id' => $this->{$this->getKeyName()},
+                    'product_sku_id' => $sku->id,
+                    'attribute_id' => $attribute->id,
+                    'attribute_value_id' => $value->id,
+                ],
+                [
                     'product_sku_id' => $sku->id,
                     'attribute_id' => $attribute->id,
                     'attribute_value_id' => $value->id,

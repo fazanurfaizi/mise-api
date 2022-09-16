@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\Product\ProductAttributeController;
 use App\Http\Controllers\Admin\Product\ProductCategoryController;
 use App\Http\Controllers\Admin\Product\ProductController;
 use App\Http\Controllers\Admin\Product\ProductUnitController;
+use App\Http\Controllers\Admin\Product\ProductSkuController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,6 +67,18 @@ Route::controller(ProductUnitController::class)
         Route::put('product-units-multipleRestore', 'multipleRestore')->name('multiple-restore');
     });
 
+Route::apiResource('product-attributes', ProductAttributeController::class);
+Route::controller(ProductAttributeController::class)
+    ->as('product-attributes')
+    ->group(function() {
+        Route::get('product-attributes-bin', 'browseBin')->name('browse-bin');
+        Route::delete('product-attributes-forceDestroy/{id}', 'forceDestroy')->name('force-destroy');
+        Route::post('product-attributes-multipleDestroy', 'multipleDestroy')->name('multiple-destroy');
+        Route::post('product-attributes-multipleForceDestroy', 'multipleForceDestroy')->name('multiple-force-destroy');
+        Route::get('product-attributes-restore/{id}', 'restore')->name('restore');
+        Route::put('product-attributes-multipleRestore', 'multipleRestore')->name('multiple-restore');
+    });
+
 Route::apiResource('products', ProductController::class);
 Route::controller(ProductController::class)
     ->as('products')
@@ -78,14 +91,4 @@ Route::controller(ProductController::class)
         Route::put('products-multipleRestore', 'multipleRestore')->name('multiple-restore');
     });
 
-Route::apiResource('product-attributes', ProductAttributeController::class);
-Route::controller(ProductAttributeController::class)
-    ->as('product-attributes')
-    ->group(function() {
-        Route::get('product-attributes-bin', 'browseBin')->name('browse-bin');
-        Route::delete('product-attributes-forceDestroy/{id}', 'forceDestroy')->name('force-destroy');
-        Route::post('product-attributes-multipleDestroy', 'multipleDestroy')->name('multiple-destroy');
-        Route::post('product-attributes-multipleForceDestroy', 'multipleForceDestroy')->name('multiple-force-destroy');
-        Route::get('product-attributes-restore/{id}', 'restore')->name('restore');
-        Route::put('product-attributes-multipleRestore', 'multipleRestore')->name('multiple-restore');
-    });
+Route::apiResource('products.skus', ProductSkuController::class)->except('update')->shallow();

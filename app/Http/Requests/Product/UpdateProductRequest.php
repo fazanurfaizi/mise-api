@@ -23,8 +23,6 @@ class UpdateProductRequest extends FormRequest
      */
     public function rules()
     {
-        $id = $this->route()->parameter('product')['id'];
-
         return [
             'name' => 'required|string|max:255',
             'brand_id' => 'required|exists:brands,id',

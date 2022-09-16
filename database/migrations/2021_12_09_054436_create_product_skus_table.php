@@ -18,8 +18,8 @@ class CreateProductSkusTable extends Migration
             $table->bigInteger('product_id')->unsigned();
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->string('code')->unique();
-            $table->decimal('price', 8, 2)->default(0);
-            $table->decimal('cost', 8, 2)->default(0);
+            $table->decimal('price', 16, 2)->default(0);
+            $table->decimal('cost', 16, 2)->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

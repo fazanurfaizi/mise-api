@@ -25,7 +25,12 @@ trait HasAttributes
 
         try {
             $attribute = ProductAttribute::where(['name' => $value])->first();
-            $this->attributes()->attach($attribute);
+            if($this->hasAttribute($value)) {
+                $this->removeAttribute($attribute->id);
+                $this->attributes()->attach($attribute);
+            } else {
+                $this->attributes()->attach($attribute);
+            }
 
             DB::commit();
         } catch (Exception $e) {
@@ -49,9 +54,7 @@ trait HasAttributes
         DB::beginTransaction();
 
         try {
-            // $attributes = ProductAttribute::whereIn('id', $ids)->first();
             $this->attributes()->attach($attributes->pluck('id')->toArray());
-            // $this->attributes()->sync($attributes);
 
             DB::commit();
         } catch (Exception $e) {
@@ -66,16 +69,15 @@ trait HasAttributes
     /**
 	 * It should remove attribute from product
 	 *
-	 * @param string $key
+	 * @param int $id
 	 * @return self
 	 */
-    public function removeAttribute($key)
+    public function removeAttribute($id)
     {
         DB::beginTransaction();
 
         try {
-            $attribute = $this->attributes()->where('name', $key)->firstOrFail();
-            $attribute->delete();
+            $this->attributes()->detach($id);
 
             DB::commit();
         } catch (Exception $e) {
