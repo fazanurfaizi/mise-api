@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+use function GuzzleHttp\Promise\queue;
+
 class Warehouse extends Model
 {
     use HasFactory,
@@ -18,7 +20,14 @@ class Warehouse extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'description'
+        'name',
+        'description',
+        'email',
+        'address',
+        'city',
+        'zipcode',
+        'phone_number',
+        'is_default'
     ];
 
     /**
@@ -29,6 +38,26 @@ class Warehouse extends Model
     protected $guarded = [
         'id', 'created_at', 'updated_at'
     ];
+
+    /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function($warehouse) {
+            if($warehouse->is_default) {
+                static::query()->update(['is_default' => false]);
+            }
+        });
+
+        static::updating(function($warehouse) {
+            if($warehouse->is_default) {
+                static::query()->update(['is_default' => false]);
+            }
+        });
+    }
 
     /**
      * Get all of the items for the Warehouse
