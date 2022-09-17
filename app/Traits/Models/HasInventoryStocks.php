@@ -48,10 +48,6 @@ trait HasInventoryStocks
     public function postCreate()
     {
         if(!$this->getLastMovement()) {
-            Log::info([
-                $this->beforeQuantity,
-                $this->quantity
-            ]);
             $this->generateStockMovement(0, $this->quantity, $this->reason, $this->cost);
         }
     }

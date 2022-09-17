@@ -3,6 +3,7 @@
 namespace App\Observers\Inventory;
 
 use App\Models\Inventory\InventoryStock;
+use Illuminate\Support\Facades\Log;
 
 class InventoryStockObserver
 {
@@ -35,12 +36,12 @@ class InventoryStockObserver
     }
 
     /**
-     * Handle the InventoryStock "updated" event.
+     * Handle the InventoryStock "updating" event.
      *
      * @param  \App\Models\Inventory\InventoryStock  $inventoryStock
      * @return void
      */
-    public function updated(InventoryStock $inventoryStock)
+    public function updating(InventoryStock $inventoryStock)
     {
         /*
         * Retrieve the original quantity before it was updated,
@@ -57,6 +58,18 @@ class InventoryStockObserver
     }
 
     /**
+     * Handle the InventoryStock "updated" event.
+     *
+     * @param  \App\Models\Inventory\InventoryStock  $inventoryStock
+     * @return void
+     */
+    public function updated(InventoryStock $inventoryStock)
+    {
+        Log::info("Post Update");
+        // $inventoryStock->postUpdate();
+    }
+
+    /**
      * Handle the InventoryStock "deleted" event.
      *
      * @param  \App\Models\Inventory\InventoryStock  $inventoryStock
@@ -64,7 +77,7 @@ class InventoryStockObserver
      */
     public function deleted(InventoryStock $inventoryStock)
     {
-        $inventoryStock->postUpdate();
+        //
     }
 
     /**

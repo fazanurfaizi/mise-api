@@ -74,15 +74,13 @@ trait HasItemStocks
             /*
              * A stock record wasn't found on this location, we'll create one
              */
-            $stock = $this->stocks()->create([
+            return $this->stocks()->create([
                 'warehouse_id' => $location->getKey(),
-                'quantity' => 0,
+                'quantity' => $quantity,
                 'aisle' => $aisle,
                 'row' => $row,
                 'bin' => $bin
             ]);
-
-            return $stock->put($quantity, $reason, $cost);
         } catch (Exception $exception) {
             throw $exception;
         }
