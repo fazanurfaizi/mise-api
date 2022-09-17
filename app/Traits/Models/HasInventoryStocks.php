@@ -57,6 +57,11 @@ trait HasInventoryStocks
      */
     public function postUpdate()
     {
+        /*
+        * Retrieve the original quantity before it was updated,
+        * so we can create generate an update with it
+        */
+        $this->beforeQuantity = $this->getOriginal('quantity');
         $this->generateStockMovement($this->beforeQuantity, $this->quantity, $this->reason, $this->cost);
     }
 
@@ -410,6 +415,7 @@ trait HasInventoryStocks
                 return $this;
             }
 
+            DB::enableQueryLog();
             $this->quantity = $total;
 
             $this->setReason($reason);
@@ -417,6 +423,8 @@ trait HasInventoryStocks
             $this->setCost($cost);
 
             $this->save();
+
+            Log::info(DB::getQueryLog());
 
             $this->fireModelEvent('stock.added', [
                 'stock' => $this,
@@ -427,6 +435,7 @@ trait HasInventoryStocks
             return $this;
         } catch (\Exception $e) {
             DB::rollBack();
+            throw $e;
         }
 
         return false;
@@ -553,15 +562,13 @@ trait HasInventoryStocks
      */
     private function generateStockMovement($before, $after, $reason = '', $cost = 0)
     {
-        $insert = [
+        return $this->movements()->create([
             'stock_id' => $this->getKey(),
             'before' => $before,
             'after' => $after,
             'reason' => $reason,
             'cost' => $cost,
-        ];
-
-        return $this->movements()->create($insert);
+        ]);
     }
 
     /**

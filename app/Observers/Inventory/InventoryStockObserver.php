@@ -44,12 +44,6 @@ class InventoryStockObserver
     public function updating(InventoryStock $inventoryStock)
     {
         /*
-        * Retrieve the original quantity before it was updated,
-        * so we can create generate an update with it
-        */
-        $inventoryStock->beforeQuantity = $inventoryStock->getOriginal('quantity');
-
-        /*
         * Check if a reason has been set, if not let's retrieve the default change reason
         */
         if (!$inventoryStock->reason) {
@@ -65,8 +59,7 @@ class InventoryStockObserver
      */
     public function updated(InventoryStock $inventoryStock)
     {
-        Log::info("Post Update");
-        // $inventoryStock->postUpdate();
+        $inventoryStock->postUpdate();
     }
 
     /**
