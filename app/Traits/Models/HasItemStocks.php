@@ -2,7 +2,6 @@
 
 namespace App\Traits\Models;
 
-use Exception;
 use App\Exceptions\StockAlreadyExistsException;
 use App\Exceptions\StockNotFoundException;
 use App\Models\Inventory\InventoryStock;
@@ -10,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait HasItemStocks
 {
-    use InteractWithLocation;
+    use InteractWithWarehouse;
 
     /**
      * Get all of the stocks for the ProductSku
@@ -46,7 +45,7 @@ trait HasItemStocks
      * Creates a stock record to the current inventory item.
      *
      * @param int|float|string $quantity
-     * @param $location
+     * @param $warehouse
      * @param string           $reason
      * @param int|float|string $cost
      * @param null             $aisle
@@ -55,85 +54,77 @@ trait HasItemStocks
      *
      * @throws \App\Exceptions\StockAlreadyExistsException
      * @throws \App\Exceptions\StockNotFoundException
-     * @throws \App\Exceptions\InvalidLocationException
+     * @throws \App\Exceptions\InvalidWarehouseException
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function createStockOnLocation($quantity, $location, $reason = '', $cost = 0, $aisle = null, $row = null, $bin = null)
+    public function createStockOnWarehouse($quantity, $warehouse, $reason = '', $cost = 0, $aisle = null, $row = null, $bin = null)
     {
-        $location = $this->getLocation($location);
+        $warehouse = $this->getWarehouse($warehouse);
 
-        try {
-            /*
-             * We want to make sure stock doesn't exist on the specified location already
-             */
-            if($this->getStockFromLocation($location)) {
-                throw new StockAlreadyExistsException(__('Stock Already Exists'));
-            }
-
-            /*
-             * A stock record wasn't found on this location, we'll create one
-             */
-            return $this->stocks()->create([
-                'warehouse_id' => $location->getKey(),
-                'quantity' => $quantity,
-                'aisle' => $aisle,
-                'row' => $row,
-                'bin' => $bin
-            ]);
-        } catch (Exception $exception) {
-            throw $exception;
+        /*
+        * We want to make sure stock doesn't exist on the specified wareh$warehouse already
+        */
+        if($this->getStockFromWarehouse($warehouse)) {
+            throw new StockAlreadyExistsException(__('Stock Already Exists'));
         }
+
+        /*
+        * A stock record wasn't found on this warehouse, we'll create one
+        */
+        return $this->stocks()->create([
+            'warehouse_id' => $warehouse->getKey(),
+            'quantity' => $quantity,
+            'aisle' => $aisle,
+            'row' => $row,
+            'bin' => $bin
+        ]);
     }
 
     /**
      * Instantiates a new stock on the specified
-     * location on the current item.
+     * warehouse on the current item.
      *
-     * @param $location
+     * @param $warehouse
      *
      * @throws \App\Exceptions\StockAlreadyExistsException
-     * @throws \App\Exceptions\InvalidLocationException
+     * @throws \App\Exceptions\InvalidWarehouseException
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function newStockOnLocation($location)
+    public function newStockOnWarehouse($warehouse)
     {
-        $location = $this->getLocation($location);
+        $warehouse = $this->getWarehouse($warehouse);
 
-        try {
-            if($this->getStockFromLocation($location)) {
-                throw new StockAlreadyExistsException(__('Stock Already Exists'));
-            }
-
-            $stock = $this->stocks()->getRelated();
-            $stock->product_sku_id = $this->getKey();
-            $stock->warehouse_id = $location->getKey();
-
-            return $stock;
-        } catch (Exception $exception) {
-            throw $exception;
+        if($this->getStockFromWarehouse($warehouse)) {
+            throw new StockAlreadyExistsException(__('Stock Already Exists'), 422);
         }
+
+        $stock = $this->stocks()->getRelated();
+        $stock->product_sku_id = $this->getKey();
+        $stock->warehouse_id = $warehouse->getKey();
+
+        return $stock;
     }
 
 
     /**
-     * Takes the specified amount ($quantity) of stock from specified stock location.
+     * Takes the specified amount ($quantity) of stock from specified stock warehouse.
      *
      * @param int|float|string $quantity
-     * @param $location
+     * @param $warehouse
      * @param string           $reason
      *
      * @throws StockNotFoundException
      *
      * @return array
      */
-    public function takeFromLocation($quantity, $location, $reason = '')
+    public function takeFromWarehouse($quantity, $warehouse, $reason = '')
     {
-        if(is_array($location)) {
-            return $this->takeFromManyLocations($quantity, $location, $reason);
+        if(is_array($warehouse)) {
+            return $this->takeFromManyWarehouses($quantity, $warehouse, $reason);
         } else {
-            $stock = $this->ensureStockIsExists($location);
+            $stock = $this->ensureStockIsExists($warehouse);
 
             if($stock->take($quantity, $reason)) {
                 return $this;
@@ -144,22 +135,22 @@ trait HasItemStocks
     }
 
     /**
-     * Takes the specified amount ($quantity) of stock from the specified stock locations.
+     * Takes the specified amount ($quantity) of stock from the specified stock warehouse.
      *
      * @param int|float|string $quantity
-     * @param array            $locations
+     * @param array            $warehouse
      * @param string           $reason
      *
      * @throws \App\Exceptions\StockNotFoundException
      *
      * @return array
      */
-    public function takeFromManyLocations($quantity, $locations = [], $reason = '')
+    public function takeFromManyWarehouses($quantity, $warehouses = [], $reason = '')
     {
         $stocks = [];
 
-        foreach ($locations as $location) {
-            $stock = $this->ensureStockIsExists($location);
+        foreach ($warehouses as $warehouse) {
+            $stock = $this->ensureStockIsExists($warehouse);
 
             $stocks[] = $stock->take($quantity, $reason);
         }
@@ -171,35 +162,35 @@ trait HasItemStocks
      * Alias for the `take` function.
      *
      * @param int|float|string $quantity
-     * @param $location
+     * @param $warehouse
      * @param string           $reason
      *
      * @return array
      */
-    public function removeFromLocation($quantity, $location, $reason = '')
+    public function removeFromWarehouse($quantity, $warehouse, $reason = '')
     {
-        return $this->takeFromLocation($quantity, $location, $reason);
+        return $this->takeFromWarehouse($quantity, $warehouse, $reason);
     }
 
     /**
      * Alias for the `takeFromMany` function.
      *
      * @param int|float|string $quantity
-     * @param array            $locations
+     * @param array            $warehouses
      * @param string           $reason
      *
      * @return array
      */
-    public function removeFromManyLocations($quantity, $locations = [], $reason = '')
+    public function removeFromManyWarehouses($quantity, $warehouses = [], $reason = '')
     {
-        return $this->takeFromManyLocations($quantity, $locations, $reason);
+        return $this->takeFromManyWarehouses($quantity, $warehouses, $reason);
     }
 
     /**
-     * Puts the specified amount ($quantity) of stock into the specified stock location(s).
+     * Puts the specified amount ($quantity) of stock into the specified stock warehouse(s).
      *
      * @param int|float|string $quantity
-     * @param $location
+     * @param $warehouse
      * @param string           $reason
      * @param int|float|string $cost
      *
@@ -207,12 +198,12 @@ trait HasItemStocks
      *
      * @return array
      */
-    public function putToLocation($quantity, $location, $reason = '', $cost = 0)
+    public function putToWarehouse($quantity, $warehouse, $reason = '', $cost = 0)
     {
-        if(is_array($location)) {
-            return $this->putToManyLocations($quantity, $location);
+        if(is_array($warehouse)) {
+            return $this->putToManyWarehouses($quantity, $warehouse);
         } else {
-            $stock = $this->ensureStockIsExists($location);
+            $stock = $this->ensureStockIsExists($warehouse);
 
             if($stock->put($quantity, $reason, $cost)) {
                 return $this;
@@ -223,10 +214,10 @@ trait HasItemStocks
     }
 
     /**
-     * Puts the specified amount ($quantity) of stock into the specified stock locations.
+     * Puts the specified amount ($quantity) of stock into the specified stock warehouses.
      *
      * @param int|float|string $quantity
-     * @param array            $locations
+     * @param array            $warehouses
      * @param string           $reason
      * @param int|float|string $cost
      *
@@ -234,12 +225,12 @@ trait HasItemStocks
      *
      * @return array
      */
-    public function putToManyLocations($quantity, $locations = [], $reason = '', $cost = 0)
+    public function putToManyWarehouses($quantity, $warehouses = [], $reason = '', $cost = 0)
     {
         $stocks = [];
 
-        foreach ($locations as $location) {
-            $stock = $this->ensureStockIsExists($location);
+        foreach ($warehouses as $warehouse) {
+            $stock = $this->ensureStockIsExists($warehouse);
 
             $stocks[] = $stock->put($quantity, $reason, $cost);
         }
@@ -249,34 +240,34 @@ trait HasItemStocks
      * Alias for the `put` function.
      *
      * @param int|float|string $quantity
-     * @param $location
+     * @param $warehouse
      * @param string           $reason
      * @param int|float|string $cost
      *
      * @return array
      */
-    public function addToLocation($quantity, $location, $reason = '', $cost = 0)
+    public function addToWarehouse($quantity, $warehouse, $reason = '', $cost = 0)
     {
-        return $this->putToLocation($quantity, $location, $reason, $cost);
+        return $this->putToWarehouse($quantity, $warehouse, $reason, $cost);
     }
 
     /**
      * Alias for the `putToMany` function.
      *
      * @param int|float|string $quantity
-     * @param array $locations
+     * @param array $warehouses
      * @param string $reason
      * @param int|float|string $cost
      *
      * @return array
      */
-    public function addToManyLocations($quantity, $locations = [], $reason = '', $cost = 0)
+    public function addToManyWarehouses($quantity, $warehouses = [], $reason = '', $cost = 0)
     {
-        return $this->putToManyLocations($quantity, $locations, $reason, $cost);
+        return $this->putToManyWarehouses($quantity, $warehouses, $reason, $cost);
     }
 
     /**
-     * Moves a stock from one location to another
+     * Moves a stock from one warehouse to another
      *
      * @param $from
      * @param $to
@@ -288,24 +279,24 @@ trait HasItemStocks
     public function moveStock($from, $to)
     {
         return $this->ensureStockIsExists($from)
-            ->moveTo($this->getLocation($to));
+            ->moveTo($this->getWarehouse($to));
     }
 
     /**
-     * Retrieves an item stock from a given location.
+     * Retrieves an item stock from a given warehouse.
      *
-     * @param $location
-     * @throws \App\Exceptions\InvalidLocationException
+     * @param $warehouse
+     * @throws \App\Exceptions\InvalidWarehouseException
      * @throws \App\Exceptions\StockNotFoundException
      * @return mixed
      */
-    public function getStockFromLocation($location)
+    public function getStockFromWarehouse($warehouse)
     {
-        $location = $this->getLocation($location);
+        $warehouse = $this->getWarehouse($warehouse);
 
         $stock = $this->stocks()
             ->where('product_sku_id', $this->getKey())
-            ->where('warehouse_id', $location->getKey())
+            ->where('warehouse_id', $warehouse->getKey())
             ->first();
 
         return $stock;
@@ -314,14 +305,14 @@ trait HasItemStocks
     /**
      * Check if item stock is already exists or not.
      *
-     * @param $location
-     * @throws \App\Exceptions\InvalidLocationException
+     * @param $warehouse
+     * @throws \App\Exceptions\InvalidWarehouseException
      * @throws \App\Exceptions\StockNotFoundException
      * @return mixed
      */
-    private function ensureStockIsExists($location)
+    private function ensureStockIsExists($warehouse)
     {
-        return $this->getStockFromLocation($location) ?? throw new StockNotFoundException(__('Stock Not Found'));
+        return $this->getStockFromWarehouse($warehouse) ?? throw new StockNotFoundException(__('Stock Not Found'));
     }
 
 }

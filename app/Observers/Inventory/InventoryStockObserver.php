@@ -3,7 +3,6 @@
 namespace App\Observers\Inventory;
 
 use App\Models\Inventory\InventoryStock;
-use Illuminate\Support\Facades\Log;
 
 class InventoryStockObserver
 {

@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 
-class InvalidLocationException extends Exception
+class InvalidWarehouseException extends Exception
 {
     //
 }

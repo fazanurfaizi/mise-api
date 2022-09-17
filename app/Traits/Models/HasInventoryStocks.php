@@ -8,11 +8,10 @@ use App\Exceptions\InvalidQuantityException;
 use App\Exceptions\InvalidMovementException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 trait HasInventoryStocks
 {
-    use InteractWithLocation;
+    use InteractWithWarehouse;
 
     /**
      * Stores the quantity before an update.
@@ -168,17 +167,17 @@ trait HasInventoryStocks
     }
 
     /**
-     * Moves a stock to the specified location.
+     * Moves a stock to the specified warehouse.
      *
-     * @param $location
+     * @param $warehouse
      *
      * @return bool
      */
-    public function moveTo($location)
+    public function moveTo($warehouse)
     {
-        $location = $this->getLocation($location);
+        $warehouse = $this->getWarehouse($warehouse);
 
-        return $this->processMoveOperation($location);
+        return $this->processMoveOperation($warehouse);
     }
 
     /**
@@ -415,7 +414,6 @@ trait HasInventoryStocks
                 return $this;
             }
 
-            DB::enableQueryLog();
             $this->quantity = $total;
 
             $this->setReason($reason);
@@ -423,8 +421,6 @@ trait HasInventoryStocks
             $this->setCost($cost);
 
             $this->save();
-
-            Log::info(DB::getQueryLog());
 
             $this->fireModelEvent('stock.added', [
                 'stock' => $this,
@@ -443,15 +439,15 @@ trait HasInventoryStocks
 
     /**
      * Processes the stock moving from it's current
-     * location, to the specified location.
+     * warehouse, to the specified warehouse.
      *
-     * @param mixed $location
+     * @param mixed $warehouse
      *
      * @return bool
      */
-    private function processMoveOperation(Model $location)
+    private function processMoveOperation(Model $warehouse)
     {
-        $this->location_id = $location->getKey();
+        $this->warehouse_id = $warehouse->getKey();
 
         DB::beginTransaction();
 

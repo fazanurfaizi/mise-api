@@ -20,7 +20,9 @@ class ProductSkuFactory extends Factory
     {
         return [
             'product_id' => Product::factory()->create()->id,
-            'code' => Str::random(10)
+            'code' => Str::random(10),
+            'price' => $this->faker->randomFloat(2, 1000, 100000),
+            'cost' => $this->faker->randomFloat(2, 1000, 100000)
         ];
     }
 }
