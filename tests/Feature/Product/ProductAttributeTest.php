@@ -114,7 +114,7 @@ class ProductAttributeTest extends TestCase
 
 		$selected = sizeof($attributes) < 1 ? 0 : rand(0, sizeof($attributes) - 1);
 
-		$product->removeAttribute($attributes[$selected]['name']);
+		$product->removeAttribute($attributes[$selected]['id']);
 
 		$this->assertEquals($size - 1, sizeof($product->loadAttributes()->toArray()), 'Attributes should be equal to product attribute');
 	}

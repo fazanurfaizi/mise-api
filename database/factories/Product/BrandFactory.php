@@ -18,9 +18,9 @@ class BrandFactory extends Factory
     {
         return [
             'name' => $this->faker->sentence(),
-            'description' => $this->faker->sentences(),
+            'description' => $this->faker->sentence(),
             'website' => $this->faker->url(),
-            'is_enabled' => true
+            'is_enabled' => $this->faker->boolean()
         ];
     }
 

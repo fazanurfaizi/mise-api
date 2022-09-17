@@ -2,8 +2,8 @@
 
 namespace Database\Factories\Product;
 
+use App\Models\Product\Brand;
 use App\Models\Product\Product;
-use App\Models\Product\ProductCategory;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -23,6 +23,10 @@ class ProductFactory extends Factory
             'name' => $title,
             'slug' => Str::slug($title),
             'description' => $this->faker->sentence(10, true),
+            'brand_id' => Brand::factory()->create()->id,
+            'condition' => $this->faker->randomElement(['new', 'second']),
+            'min_purchase' => $this->faker->randomDigit(),
+            'featured' => $this->faker->boolean()
         ];
     }
 }

@@ -18,7 +18,13 @@ class WarehouseFactory extends Factory
     {
         return [
             'name' => $this->faker->word,
-            'description' => $this->faker->words(3, true)
+            'description' => $this->faker->words(3, true),
+            'email' => $this->faker->unique()->safeEmail(),
+            'address' => $this->faker->address(),
+            'city' => $this->faker->city(),
+            'zipcode' => $this->faker->countryCode(),
+            'phone_number' => $this->faker->unique()->phoneNumber(),
+            'is_default' => $this->faker->boolean()
         ];
     }
 }

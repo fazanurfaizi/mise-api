@@ -38,7 +38,6 @@ class ProductCategory extends Model
             'category_id',
             'product_id'
         )->using(ProductHasCategory::class)
-        ->withTimestamps()
-        ->whereNull('product_has_category.deleted_at');
+        ->withTimestamps();
     }
 }

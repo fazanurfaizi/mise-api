@@ -30,7 +30,7 @@ class ProductResource extends JsonResource
             'categories' => CategoryResource::collection($this->whenLoaded('categories')),
             'units' => ProductUnitResource::collection($this->whenLoaded('units')),
             'images' => MediaResource::collection($this->whenLoaded('media', $this->getMedia('products'))),
-            // 'attributes' => $this->whenLoaded('attributes', ProductAttributeResource::collection($this->attributes)->toArray(app('request'))),
+            'attributes' => $this->whenLoaded('attributes', ProductAttributeResource::collection($this->attributes)->toArray(app('request'))),
             'variants' => $this->whenLoaded(
                 'variants',
                 $this->when($this->hasAttributes() && $this->hasSku(),
