@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\User\User;
-use App\Models\Access\Role;
+use App\Models\User\Role;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 

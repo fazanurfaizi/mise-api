@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Access;
+namespace App\Models\User;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Permission\Models\Role as Model;

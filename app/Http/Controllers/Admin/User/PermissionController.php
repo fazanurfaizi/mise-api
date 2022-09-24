@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\User;
 
 use Exception;
 use App\Http\Controllers\Controller;
-use App\Models\Access\Role;
-use App\Models\Access\Permission;
+use App\Models\User\Role;
+use App\Models\User\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\QueryBuilder;

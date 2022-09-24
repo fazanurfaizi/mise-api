@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\User;
 
 use Exception;
 use App\Models\User\User;
-use App\Models\Access\Role;
+use App\Models\User\Role;
 use App\Http\Resources\User\UserCollection;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;

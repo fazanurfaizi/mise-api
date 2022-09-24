@@ -3,9 +3,9 @@
 use App\Http\Controllers\Admin\Inventory\WarehouseController;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\RoleController;
-use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\User\UserController;
+use App\Http\Controllers\Admin\User\RoleController;
+use App\Http\Controllers\Admin\User\PermissionController;
 use App\Http\Controllers\Admin\Product\BrandController;
 use App\Http\Controllers\Admin\Product\ProductAttributeController;
 use App\Http\Controllers\Admin\Product\ProductCategoryController;
