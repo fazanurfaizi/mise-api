@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\ProductSku;
+namespace App\Actions\Products\ProductSku;
 
 use App\Models\Product\Product;
 use App\Models\Product\ProductAttribute;
@@ -22,7 +22,7 @@ class AttachProductSku
     {
         foreach ($request->skus as $sku) {
             collect($sku['variant'])->each(function($variant) use ($product) {
-                ProductAttribute::firstOrCreate([
+                ProductAttribute::query()->firstOrCreate([
                     'name' => $variant['option']
                 ]);
 

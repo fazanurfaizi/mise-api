@@ -8,7 +8,9 @@ use App\Listeners\UserRegisteredListener;
 use App\Listeners\TwoFactorRecoveryCodesGeneratedListener;
 use App\Listeners\TwoFactorDisabledListener;
 use App\Models\Inventory\InventoryStock;
+use App\Models\Product\Product;
 use App\Observers\Inventory\InventoryStockObserver;
+use App\Observers\Product\ProductObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -41,5 +43,6 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         InventoryStock::observe(InventoryStockObserver::class);
+        Product::observe(ProductObserver::class);
     }
 }

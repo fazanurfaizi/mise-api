@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin\Product;
 
 use Exception;
-use App\Actions\Product\CreateProduct;
-use App\Actions\Product\UpdateProduct;
+use App\Actions\Products\Product\CreateProduct;
+use App\Actions\Products\Product\GetProducts;
+use App\Actions\Products\Product\UpdateProduct;
 use App\Models\Product\Product;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\StoreProductRequest;
@@ -13,8 +14,6 @@ use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Product\ProductResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
-use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends Controller
 {
@@ -26,18 +25,12 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $products = QueryBuilder::for(Product::class)
-            ->allowedFields(['id', 'name', 'slug', 'description'])
-            ->allowedFilters(['name', 'slug'])
-            ->defaultSort('-created_at')
-            ->allowedSorts('id', 'name')
-            ->whereHas('categories', function($query) use ($request) {
-                $query->where('product_categories.id', $request->get('category_id'));
-            })
-            ->jsonPaginate();
+        $this->authorize('product-viewAny');
 
         return response()->json([
-            'data' => new ProductCollection($products)
+            'data' => new ProductCollection(
+                GetProducts::run($request)
+            )
         ], Response::HTTP_OK);
     }
 
@@ -49,16 +42,12 @@ class ProductController extends Controller
      */
     public function browseBin(Request $request)
     {
-        $products = QueryBuilder::for(Product::class)
-            ->allowedFields(['id', 'name', 'slug', 'description'])
-            ->allowedFilters(['name', 'slug'])
-            ->defaultSort('-created_at')
-            ->allowedSorts('id', 'name')
-            ->onlyTrashed()
-            ->jsonPaginate();
+        $this->authorize('product-viewBin');
 
         return response()->json([
-            'data' => new ProductCollection($products)
+            'data' => new ProductCollection(
+                GetProducts::run($request, onlyTrashed: true)
+            )
         ], Response::HTTP_OK);
     }
 
@@ -71,17 +60,14 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         try {
-            DB::beginTransaction();
+            $this->authorize('product-store');
 
             CreateProduct::run($request);
-
-            DB::commit();
 
             return response()->json([
                 'message' => __('Created successfully')
             ], Response::HTTP_CREATED);
         } catch (Exception $e) {
-            DB::rollBack();
 
             return response()->json([
                 'message' => $e->getMessage()
@@ -97,6 +83,8 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        $this->authorize('product-view');
+
         $product->load(['brand', 'categories', 'units', 'media', 'variants']);
 
         return response()->json([
@@ -114,18 +102,14 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, Product $product)
     {
         try {
-            DB::beginTransaction();
+            $this->authorize('product-update');
 
             UpdateProduct::run($request, $product);
-
-            DB::commit();
 
             return response()->json([
                 'message' => __('Updated successfully')
             ], Response::HTTP_CREATED);
         } catch (Exception $e) {
-            DB::rollBack();
-
             return response()->json([
                 'message' => $e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -141,19 +125,14 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         try {
-            DB::beginTransaction();
+            $this->authorize('product-delete');
 
             $product->delete();
-            $product->skus()->delete();
-
-            DB::commit();
 
             return response()->json([
                 'message' => __('Deleted successfully')
             ], Response::HTTP_OK);
         } catch (Exception $e) {
-            DB::rollback();
-
             return response()->json([
                 'message' => $e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -169,24 +148,17 @@ class ProductController extends Controller
     public function forceDestroy($id)
     {
         try {
-            DB::beginTransaction();
+            $this->authorize('product-delete');
 
-            $product = Product::withTrashed()->findOrFail($id);
-            $product->attributes()->detach();
-            $product->categories()->detach();
-            $product->units()->detach();
-            $product->skus()->forceDelete();
-            $product->media()->delete();
-            $product->forceDelete();
-
-            DB::commit();
+            Product::query()
+                ->withTrashed()
+                ->findOrFail($id)
+                ->forceDelete();
 
             return response()->json([
                 'message' => __('Deleted successfully')
             ], Response::HTTP_OK);
         } catch (Exception $e) {
-            DB::rollback();
-
             return response()->json([
                 'message' => $e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -202,20 +174,18 @@ class ProductController extends Controller
     public function multipleDestroy(Request $request)
     {
         try {
-            DB::beginTransaction();
+            $this->authorize('product-delete');
 
-            $products = Product::whereIn('id', $request->post('ids'))->get();
-            $products->each(fn($product) => $product->skus()->delete());
-            $products->each(fn($product) => $product->delete());
-
-            DB::commit();
+            Product::query()
+                ->whereIn('id', $request->post('ids'))
+                ->get()
+                ->each
+                ->delete();
 
             return response()->json([
                 'message' => __('Deleted successfully')
             ], Response::HTTP_OK);
         } catch (Exception $e) {
-            DB::rollback();
-
             return response()->json([
                 'message' => $e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -231,28 +201,19 @@ class ProductController extends Controller
     public function multipleForceDestroy(Request $request)
     {
         try {
-            DB::beginTransaction();
+            $this->authorize('product-delete');
 
-            $products = Product::query()
+            Product::query()
                 ->withTrashed()
                 ->whereIn('id', $request->post('ids'))
-                ->get();
-
-            $products->each(fn($product) => $product->attributes()->detach());
-            $products->each(fn($product) => $product->categories()->detach());
-            $products->each(fn($product) => $product->units()->detach());
-            $products->each(fn($product) => $product->skus()->forceDelete());
-            $products->each(fn($product) => $product->media()->delete());
-            $products->each(fn($product) => $product->forceDelete());
-
-            DB::commit();
+                ->get()
+                ->each
+                ->forceDelete();
 
             return response()->json([
                 'message' => __('Deleted successfully')
             ], Response::HTTP_OK);
         } catch (Exception $e) {
-            DB::rollback();
-
             return response()->json([
                 'message' => $e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -268,20 +229,17 @@ class ProductController extends Controller
     public function restore($id)
     {
         try {
-            DB::beginTransaction();
+            $this->authorize('product-restore');
 
-            $product = Product::withTrashed()->findOrFail($id)->firstOrFail();
-            $product->restore();
-            $product->skus()->restore();
-
-            DB::commit();
+            Product::query()
+                ->withTrashed()
+                ->findOrFail($id)
+                ->restore();
 
             return response()->json([
                 'message' => __('Restored successfully')
             ], Response::HTTP_OK);
         } catch (Exception $e) {
-            DB::rollback();
-
             return response()->json([
                 'message' => $e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -297,24 +255,19 @@ class ProductController extends Controller
     public function multipleRestore(Request $request)
     {
         try {
-            DB::beginTransaction();
+            $this->authorize('product-restore');
 
-            $products = Product::query()
+            Product::query()
                 ->withTrashed()
                 ->whereIn('id', $request->post('ids'))
-                ->get();
-
-            $products->each(fn($product) => $product->skus()->restore());
-            $products->each(fn($product) => $product->restore());
-
-            DB::commit();
+                ->get()
+                ->each
+                ->restore();
 
             return response()->json([
                 'message' => __('Restored successfully')
             ], Response::HTTP_OK);
         } catch (Exception $e) {
-            DB::rollback();
-
             return response()->json([
                 'message' => $e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);

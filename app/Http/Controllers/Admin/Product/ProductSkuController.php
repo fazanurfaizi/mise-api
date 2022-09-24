@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin\Product;
 
 use Exception;
-use App\Actions\ProductSku\AttachProductSku;
+use App\Actions\Products\ProductSku\AttachProductSku;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\StoreProductSkuRequest;
 use App\Http\Resources\Product\ProductVariantResource;

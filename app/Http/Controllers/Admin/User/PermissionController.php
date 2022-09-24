@@ -60,11 +60,13 @@ class PermissionController extends Controller
             DB::beginTransaction();
 
             $permissions = [];
-            $permissions[] = Permission::firstOrCreate(['name' => "{$request->get('table')}.viewAny"]);
-            $permissions[] = Permission::firstOrCreate(['name' => "{$request->get('table')}.view"]);
-            $permissions[] = Permission::firstOrCreate(['name' => "{$request->get('table')}.create"]);
-            $permissions[] = Permission::firstOrCreate(['name' => "{$request->get('table')}.update"]);
-            $permissions[] = Permission::firstOrCreate(['name' => "{$request->get('table')}.delete"]);
+            $permissions[] = Permission::firstOrCreate(['name' => "{$request->get('table')}-viewAny"]);
+            $permissions[] = Permission::firstOrCreate(['name' => "{$request->get('table')}-view"]);
+            $permissions[] = Permission::firstOrCreate(['name' => "{$request->get('table')}-viewBin"]);
+            $permissions[] = Permission::firstOrCreate(['name' => "{$request->get('table')}-create"]);
+            $permissions[] = Permission::firstOrCreate(['name' => "{$request->get('table')}-update"]);
+            $permissions[] = Permission::firstOrCreate(['name' => "{$request->get('table')}-delete"]);
+            $permissions[] = Permission::firstOrCreate(['name' => "{$request->get('table')}-restore"]);
 
             $role = Role::firstOrCreate(['name' => $request->get('role')]);
 
