@@ -11,6 +11,43 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * App\Models\Inventory\InventoryStock
+ *
+ * @property int $id
+ * @property int $warehouse_id
+ * @property int $product_sku_id
+ * @property int $quantity
+ * @property string|null $aisle
+ * @property string|null $row
+ * @property string|null $bin
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Inventory\InventoryStockMovement[] $movements
+ * @property-read int|null $movements_count
+ * @property-read ProductSku $product
+ * @property-read \App\Models\Inventory\Warehouse $warehouse
+ * @method static Builder|InventoryStock findItem(string $product)
+ * @method static Builder|InventoryStock findItemBySku(string $sku)
+ * @method static Builder|InventoryStock newModelQuery()
+ * @method static Builder|InventoryStock newQuery()
+ * @method static \Illuminate\Database\Query\Builder|InventoryStock onlyTrashed()
+ * @method static Builder|InventoryStock query()
+ * @method static Builder|InventoryStock whereAisle($value)
+ * @method static Builder|InventoryStock whereBin($value)
+ * @method static Builder|InventoryStock whereCreatedAt($value)
+ * @method static Builder|InventoryStock whereDeletedAt($value)
+ * @method static Builder|InventoryStock whereId($value)
+ * @method static Builder|InventoryStock whereProductSkuId($value)
+ * @method static Builder|InventoryStock whereQuantity($value)
+ * @method static Builder|InventoryStock whereRow($value)
+ * @method static Builder|InventoryStock whereUpdatedAt($value)
+ * @method static Builder|InventoryStock whereWarehouseId($value)
+ * @method static \Illuminate\Database\Query\Builder|InventoryStock withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|InventoryStock withoutTrashed()
+ * @mixin \Eloquent
+ */
 class InventoryStock extends Model
 {
     use HasFactory,

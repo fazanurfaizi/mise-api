@@ -17,6 +17,48 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
+/**
+ * App\Models\Shop\Catalog
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $slug
+ * @property string|null $description
+ * @property CatalogType $type
+ * @property CatalogSort $sort '1: best_selling', '2: alpha_asc', '3: alpha_desc', '4: price_desc', '5: price_asc', '6: created_desc', '7: created_asc', '8: manual'
+ * @property string $match_conditions
+ * @property string $published_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection|Media[] $media
+ * @property-read int|null $media_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|ProductSku[] $products
+ * @property-read int|null $products_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Shop\CatalogRule[] $rules
+ * @property-read int|null $rules_count
+ * @method static Builder|Catalog automatic()
+ * @method static \Database\Factories\Shop\CatalogFactory factory(...$parameters)
+ * @method static Builder|Catalog manual()
+ * @method static Builder|Catalog newModelQuery()
+ * @method static Builder|Catalog newQuery()
+ * @method static \Illuminate\Database\Query\Builder|Catalog onlyTrashed()
+ * @method static Builder|Catalog query()
+ * @method static Builder|Catalog whereCreatedAt($value)
+ * @method static Builder|Catalog whereDeletedAt($value)
+ * @method static Builder|Catalog whereDescription($value)
+ * @method static Builder|Catalog whereId($value)
+ * @method static Builder|Catalog whereMatchConditions($value)
+ * @method static Builder|Catalog whereName($value)
+ * @method static Builder|Catalog wherePublishedAt($value)
+ * @method static Builder|Catalog whereSlug($value)
+ * @method static Builder|Catalog whereSort($value)
+ * @method static Builder|Catalog whereType($value)
+ * @method static Builder|Catalog whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|Catalog withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Catalog withoutTrashed()
+ * @mixin \Eloquent
+ */
 class Catalog extends Model implements HasMedia
 {
     use HasFactory;

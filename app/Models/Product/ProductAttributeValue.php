@@ -8,6 +8,33 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * App\Models\Product\ProductAttributeValue
+ *
+ * @property int $id
+ * @property int $attribute_id
+ * @property string $value
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \App\Models\Product\ProductAttribute $attribute
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Product\ProductVariant[] $variants
+ * @property-read int|null $variants_count
+ * @method static \Database\Factories\Product\ProductAttributeValueFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductAttributeValue newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductAttributeValue newQuery()
+ * @method static \Illuminate\Database\Query\Builder|ProductAttributeValue onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductAttributeValue query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductAttributeValue whereAttributeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductAttributeValue whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductAttributeValue whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductAttributeValue whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductAttributeValue whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductAttributeValue whereValue($value)
+ * @method static \Illuminate\Database\Query\Builder|ProductAttributeValue withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|ProductAttributeValue withoutTrashed()
+ * @mixin \Eloquent
+ */
 class ProductAttributeValue extends Model
 {
     use HasFactory,

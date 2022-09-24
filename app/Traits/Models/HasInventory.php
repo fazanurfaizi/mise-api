@@ -2,8 +2,8 @@
 
 namespace App\Traits\Models;
 
-use App\Model\Product\ProductSku;
-use App\Model\Inventory\InventoryStock;
+use App\Models\Inventory\InventoryStock;
+use App\Models\Product\ProductSku;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 

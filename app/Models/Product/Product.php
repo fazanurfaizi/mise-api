@@ -3,6 +3,8 @@
 namespace App\Models\Product;
 
 use App\Enums\ProductCondition;
+use App\Models\Product\Pivot\ProductHasCategory;
+use App\Models\Product\Pivot\ProductHasUnit;
 use App\Traits\Models\Sluggable;
 use App\Traits\Models\HasAttributes;
 use App\Traits\Models\HasVariants;
@@ -17,6 +19,56 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Image\Manipulations;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
+/**
+ * App\Models\Product\Product
+ *
+ * @property int $id
+ * @property string $name
+ * @property int $brand_id
+ * @property string $slug
+ * @property string|null $description
+ * @property ProductCondition|null $condition
+ * @property int $min_purchase
+ * @property int|null $featured
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Product\ProductAttribute[] $attributes
+ * @property-read int|null $attributes_count
+ * @property-read \App\Models\Product\Brand $brand
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Product\ProductCategory[] $categories
+ * @property-read int|null $categories_count
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection|Media[] $media
+ * @property-read int|null $media_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Product\ProductSku[] $skus
+ * @property-read int|null $skus_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Product\ProductUnit[] $units
+ * @property-read int|null $units_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Product\ProductVariant[] $variants
+ * @property-read int|null $variants_count
+ * @method static \Database\Factories\Product\ProductFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Product newQuery()
+ * @method static \Illuminate\Database\Query\Builder|Product onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Product query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereBrandId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereCondition($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereFeatured($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereMinPurchase($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereSku(string $sku)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereSlug($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Product whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|Product withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Product withoutTrashed()
+ * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Inventory\InventoryStock[] $warehouses
+ * @property-read int|null $warehouses_count
+ */
 class Product extends Model implements HasMedia
 {
     use HasFactory,

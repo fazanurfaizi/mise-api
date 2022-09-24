@@ -6,6 +6,29 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * App\Models\Product\ProductVariant
+ *
+ * @property int $id
+ * @property int $product_id
+ * @property int $product_sku_id
+ * @property int $attribute_id
+ * @property int $attribute_value_id
+ * @property-read \App\Models\Product\ProductAttribute $attribute
+ * @property-read \App\Models\Product\ProductAttributeValue $option
+ * @property-read \App\Models\Product\Product $product
+ * @property-read \App\Models\Product\ProductSku $productSku
+ * @method static \Database\Factories\Product\ProductVariantFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductVariant newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductVariant newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductVariant query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductVariant whereAttributeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductVariant whereAttributeValueId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductVariant whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductVariant whereProductId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductVariant whereProductSkuId($value)
+ * @mixin \Eloquent
+ */
 class ProductVariant extends Model
 {
     use HasFactory;

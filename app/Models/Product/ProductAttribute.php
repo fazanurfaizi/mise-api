@@ -8,6 +8,32 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * App\Models\Product\ProductAttribute
+ *
+ * @property int $id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Product\Product[] $products
+ * @property-read int|null $products_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Product\ProductAttributeValue[] $values
+ * @property-read int|null $values_count
+ * @method static \Database\Factories\Product\ProductAttributeFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductAttribute newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductAttribute newQuery()
+ * @method static \Illuminate\Database\Query\Builder|ProductAttribute onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductAttribute query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductAttribute whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductAttribute whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductAttribute whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductAttribute whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ProductAttribute whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|ProductAttribute withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|ProductAttribute withoutTrashed()
+ * @mixin \Eloquent
+ */
 class ProductAttribute extends Model
 {
     use HasFactory,
