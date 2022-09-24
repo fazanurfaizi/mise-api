@@ -8,6 +8,7 @@ use App\Exceptions\InvalidQuantityException;
 use App\Exceptions\InvalidMovementException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 trait HasInventoryStocks
 {
@@ -159,11 +160,8 @@ trait HasInventoryStocks
      */
     public function isValidQuantity($quantity)
     {
-        if($this->isPositive($quantity)) {
-            return true;
-        }
-
-        throw new InvalidQuantityException(__('Invalid Quantity'));
+        return ($this->isPositive($quantity) || $this->isUsedUnderscore($quantity))
+            || throw new InvalidQuantityException(__('Invalid Quantity'));
     }
 
     /**
@@ -649,5 +647,17 @@ trait HasInventoryStocks
         }
 
         return false;
+    }
+
+    /**
+     * Check if number using underscore
+     *
+     * @param int|float|string $number
+     *
+     * @return bool
+     */
+    private function isUsedUnderscore($number): bool
+    {
+        return Str::contains($number, '_');
     }
 }

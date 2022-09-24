@@ -112,6 +112,12 @@ class Product extends Model implements HasMedia
         ->withTimestamps();
     }
 
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('products')
+            ->useFallbackUrl(url('/images/product_placeholder.jpg'));
+    }
+
     /**
      * Generate image thumbnail
      */

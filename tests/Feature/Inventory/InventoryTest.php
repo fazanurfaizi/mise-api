@@ -105,6 +105,7 @@ class InventoryTest extends TestCase
         $this->assertTrue($stock->isValidQuantity('500.0'));
         $this->assertTrue($stock->isValidQuantity('1.500'));
         $this->assertTrue($stock->isValidQuantity('15000000'));
+        $this->assertTrue($stock->isValidQuantity('15_000_000'));
     }
 
     /**
@@ -118,7 +119,7 @@ class InventoryTest extends TestCase
 
         $stock->isValidQuantity('40a');
         $stock->isValidQuantity('5,000');
-        $stock->isValidQuantity('5.000.00');
+        $stock->isValidQuantity('5.000,00');
     }
 
     /**
